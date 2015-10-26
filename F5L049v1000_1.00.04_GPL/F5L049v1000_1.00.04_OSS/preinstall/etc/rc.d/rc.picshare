@@ -1,0 +1,37 @@
+#!/bin/sh
+
+PIC=/usr/bin/pict_main.rb 
+
+pic_start() {
+  if [ -x ${PIC} ]; then
+        echo -n "Starting picshare daemon               "
+        echo "${PIC} &"
+        ${PIC} > /dev/null &
+  fi
+}
+
+pic_stop() {
+  killall pict_main.rb
+  sleep 2
+}
+
+pic_restart() {
+  pic_stop
+  sleep 1
+  pic_start
+}
+
+case "$1" in
+'start')
+  pic_start
+  ;;
+'stop')
+  pic_stop
+  ;;
+'restart')
+  pic_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+  ;;
+esac

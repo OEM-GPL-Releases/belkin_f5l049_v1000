@@ -1,0 +1,34 @@
+#!/bin/sh
+
+LIBPATH=/lib/modules
+
+usbstorage_start() {
+	insmod fuse.ko
+	insmod usb-storage.ko
+}
+
+usbstorage_stop() {
+	rmmod fuse.ko
+	rmmod usb-storage
+}
+
+usbstorage_restart() {
+	usbstorage_stop
+	sleep 1
+	usbstorage_start
+}
+
+# Main #
+cd "${LIBPATH}"
+
+case "$1" in
+'start')
+	usbstorage_start ;;
+'stop')
+	usbstorage_stop ;;
+'restart')
+	usbstorage_restart ;;
+*)
+	echo "usage $0 start|stop|restart"
+esac
+

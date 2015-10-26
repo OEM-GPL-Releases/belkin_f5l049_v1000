@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Main 
+#
+case $1 in
+'start')
+echo -n /usr/sbin/swintr.sh > /proc/silex/sw/sw_prog
+;;
+'stop')
+;;
+'restart')
+;;
+*)
+echo "usage $0 start"
+esac
+

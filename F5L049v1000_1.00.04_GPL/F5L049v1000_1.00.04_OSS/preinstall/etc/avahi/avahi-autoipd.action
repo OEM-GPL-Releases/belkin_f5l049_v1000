@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -e
+
+# Command line arguments:
+#   $1 event that happened:
+#          BIND:     Successfully claimed address
+#          CONFLICT: An IP address conflict happened
+#          UNBIND:   The IP address is no longer needed
+#          STOP:     The daemon is terminating
+#   $2 interface name
+#   $3 IP adddress
+
+if [ -x /bin/ifconfig -o -x /sbin/ifconfig ] ; then
+
+    # We have the old ifconfig tool
+
+    case "$1" in
+        BIND)
+            #ifconfig "$2:3" inet "$3" netmask 255.255.0.0 broadcast 169.254.255.255 up
+            ifconfig "$2" inet "$3" netmask 255.255.0.0 broadcast 169.254.255.255 up
+            ;;
+
+        #CONFLICT|STOP|UNBIND)
+        #    ifconfig "$2:3" down
+        #    ;;
+
+        *)
+            echo "Unknown event $1" >&2
+            exit 1
+            ;;
+    esac
+
+else
+
+    echo "No network configuration tool found." >&2
+    exit 1
+
+fi
+
+exit 0

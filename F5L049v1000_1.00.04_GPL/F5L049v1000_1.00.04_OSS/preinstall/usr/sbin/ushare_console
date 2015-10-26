@@ -1,0 +1,44 @@
+#!/bin/sh
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+# DLNA
+DLNAD=/usr/bin/ushare
+
+dlna_stop() {
+	killall -15 ushare
+	sleep 3
+	killall -9 ushare
+}
+
+dlna_restart() {
+  if [ -x ${DLNAD} ]; then
+          dlna_stop
+          count=`sxstorageinfo -m`
+	  mname=`sxromconf -c GET_MACHINE`
+	  dir=`sxsysconf DLNA_STORAGE`
+	  port=`sxsysconf DLNA_PORT_NUMBER`
+	  hname=`sxsysconf HOST_NAME`
+	  sirial=`sxromconf -c GET_SERIALNUM`
+
+	  if [ -z "$sirial" ]; then
+	  	sirial=`sxsysconf -f /etc/silex/romver.conf SERIALNUMBER`
+	  fi      
+	  if [ -z "$dir" ]; then
+	     dir="ALL"
+	  fi
+	  if [ -n "$count" ]; then
+	     ${DLNAD} -D -m "${mname}" -p ${port} -s "${sirial}" -c "${dir}" -n "${hname}"
+	  fi
+  fi
+}
+
+case "$1" in
+'restart')
+  dlna_restart
+  ;;
+'stop')
+  dlna_stop
+  ;;
+*)
+  ;;
+esac

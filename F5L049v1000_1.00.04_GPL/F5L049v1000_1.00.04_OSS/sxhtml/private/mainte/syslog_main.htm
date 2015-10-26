@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<j mmtype>
+<link rel="stylesheet" href="/css/main.css" type="text/css">
+<script type="text/javascript" src="/<j dir_path>/main.js"></script>
+<title>contents</title>
+
+<script type="text/javascript">
+<!--
+var indent = 0;
+function ContentsStart(Title)
+{
+with(document){
+	write('<tr><td class="out_left">&nbsp;<\/td><td class="calign">');
+	write('<table width="100%">');
+}
+}
+function ContentsEnd()
+{
+with(document){
+	write('<\/table>');
+	write('<\/td><td class="out_right">&nbsp;<\/td><\/tr>');
+	indent=0;
+}
+}
+function ContentsBlank()
+{
+with(document){
+	write('<tr><td class="out_left">&nbsp;<\/td><td>&nbsp;<\/td><td class="out_right">&nbsp;<\/td><\/tr>');
+}
+}
+//-->
+</script>
+</head>
+
+<body class="main">
+<script type="text/javascript">
+<!--
+awk85_br()
+//-->
+</script>
+<table width="100%" border=0 cellpadding=0 cellspacing=0>
+<tr>
+	<td class="maincmt">&nbsp;</td>
+	<td class="topinline_help">
+		<a href="./logout_main.htm"><img src="/images/logout.gif" alt="help">&nbsp;<j mlword:MSGID_LOGOUT></a>&nbsp;&nbsp;
+	</td>
+</tr>
+</table>
+<table width="100%" border=0 cellpadding=0 cellspacing=0>
+<tr>
+	<td class="out_lefttop">&nbsp;</td>
+	<td class="out_top">&nbsp;</td>
+	<td class="out_righttop">&nbsp;</td>
+</tr>
+<script type="text/javascript">
+<!--
+ContentsStart("<j mlword:MSGID_TCPIP_INFO>");
+//-->
+</script>
+<tr>
+	<td ><textarea class="Info2s" width="100%" accesskey="b" style="border:0; width:100%; height:600px; overflow-y:scroll;" readonly><j syslog></textarea></td>
+</tr>
+<script type="text/javascript">
+<!--
+ContentsEnd();
+ContentsBlank();
+//-->
+</script>
+<tr>
+	<td class="out_leftbottom">&nbsp;</td>
+	<td class="out_bottom">&nbsp;</td>
+	<td class="out_rightbottom">&nbsp;</td>
+</tr>
+</table><br>
+<table width="100%">
+	<tr>
+		<td align="right">
+			<form action="/private/mainte/syslog.txt">
+				<input type="submit" class="button1" value="<j mlword:MSGID_SAVE>" style="position:right top;"></input>&nbsp;&nbsp;&nbsp;&nbsp;
+			</form>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,51 @@
+#!/bin/sh
+
+INETD=/usr/sbin/inetd
+TELNETD=/usr/sbin/telnetd
+INETDCONF=/tmpfs/etc/inetd.conf
+
+DEBUGMODE=`sxromconf -c GET_DEBUG`
+
+inetd_start() {
+	if [ ! -f ${INETDCONF} ]; then
+		# Write config file for inet services
+		echo "telnet stream tcp nowait root ${TELNETD} telnetd -i" >> ${INETDCONF}
+	fi
+
+	if [ "${DEBUGMODE}" = "on" ]; then
+		# This script support for telnetd only.
+
+		if [ -x ${INETD} ]; then
+			echo -n "Starting inetd daemon:                  "
+			echo "${INETD}"
+			${INETD}
+		fi
+  	else	
+		echo "Debug mode is ${DEBUGMODE}, inetd does not need to start."
+	fi
+}
+
+inetd_stop() {
+	killall inetd
+}
+
+inetd_restart() {
+	inetd_stop
+	sleep 2
+	inetd_start
+}
+
+case "$1" in
+	'start')
+		inetd_start
+		;;
+	'stop')
+		inetd_stop
+		;;
+	'restart')
+		inetd_restart
+		;;
+	*)
+  		echo "usage $0 start|stop|restart"
+		;;
+esac

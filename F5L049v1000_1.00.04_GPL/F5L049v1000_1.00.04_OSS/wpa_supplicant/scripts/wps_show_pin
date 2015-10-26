@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#
+# Name : wps_show_pin
+#
+
+# Purpose :
+#    check PIN code
+#
+##########################################################
+# Refer to usage of WPA supplicant for the meaning of each option.
+. /usr/sbin/wps_subs
+
+# File witch PIN code is written
+if [ -e $pin_file ]; then
+    echo "PIN code :  $pin_code"
+else
+    echo "There is no file : $pin_file"
+    echo "Please execute wps_gen_pin command"
+fi
+

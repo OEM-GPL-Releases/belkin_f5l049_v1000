@@ -1,0 +1,41 @@
+#!/bin/sh
+
+CROND=/usr/sbin/crond
+CRONTAB=/usr/bin/crontab
+CRONROOT=/var/spool/cron/crontabs/root
+crond_start() {
+  if [ -x ${CROND} -a -r /etc/silex/crond.conf ]; then
+    if [ ! -d /var/spool/cron/crontabs ]; then
+      mkdir -p /var/spool/cron/crontabs 
+    fi
+    cp /etc/silex/crond.conf ${CRONROOT}
+    echo -n "Starting cron:                          "
+    echo "${CROND}"
+    ${CROND}
+    echo -n "                                        "
+    echo "${CRONTAB} ${CRONROOT}"
+    ${CRONTAB} ${CRONROOT}
+  fi
+}
+
+crond_stop() {
+  killall crond 2>/dev/null
+}
+
+crond_restart() {
+  crond_stop
+  sleep 2
+  crond_start
+}
+
+case "$1" in
+'start')
+  crond_start
+  ;;
+'stop')
+  crond_stop
+  ;;
+'restart')
+  crond_restart
+  ;;
+esac

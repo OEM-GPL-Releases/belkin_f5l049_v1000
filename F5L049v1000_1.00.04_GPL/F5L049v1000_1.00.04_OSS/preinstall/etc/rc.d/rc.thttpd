@@ -1,0 +1,49 @@
+#!/bin/sh
+
+THTTPD=/usr/sbin/thttpd
+HTPASSWD=/usr/sbin/htpasswd
+
+thttpd_start() {
+  if [ -x ${THTTPD} -a -r /etc/thttpd.conf ]; then
+	echo -n "Starting HTTP daemon:                   "
+
+	if [ ! -d /var/www ]; then
+		mkdir -m 755 -p /var/www
+		/usr/sbin/sxsymhtml.sh > /dev/null 2>&1
+	fi
+
+	if [ -x ${HTPASSWD} ] && [ ! -f /var/www/conf/.htpasswd ]; then
+		ROOT_PASSWORD=`sxsysconf ROOT_PASSWORD`
+		/usr/sbin/htpasswd -c /var/www/conf/.htpasswd root "${ROOT_PASSWORD}" > /dev/null 2>&1
+		/usr/sbin/htpasswd -c /var/www/mainte/.htpasswd root "${ROOT_PASSWORD}" > /dev/null 2>&1
+	fi
+
+	echo "${THTTPD} -C /etc/thttpd.conf" 
+	${THTTPD} -C /etc/thttpd.conf
+  fi
+}
+
+thttpd_stop() {
+  killall thttpd
+}
+
+thttpd_restart() {
+  thttpd_stop
+  sleep 2
+  thttpd_start
+}
+
+case "$1" in
+'start')
+  thttpd_start
+  ;;
+'stop')
+  thttpd_stop
+  ;;
+'restart')
+  thttpd_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+  ;;
+esac

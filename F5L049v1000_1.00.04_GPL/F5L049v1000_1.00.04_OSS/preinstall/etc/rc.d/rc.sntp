@@ -1,0 +1,46 @@
+#!/bin/sh
+
+SNTP=/usr/sbin/sntp
+PIDFILE=/var/run/sntp.pid
+STATEDIR=/var/cache/sntp/
+STATEFILE=sntp.state
+
+sntp_start() {
+  SERVER=`sxsysconf NTP_SERVER`
+  SYNC=`sxsysconf NTP_SYNC`
+
+  if [ -x ${SNTP} ] && [ ! "${SERVER}" = "" ] && [ ! "{SYNC}" = "" ]; then
+	if [ ! -d "${STATEDIR}" ]; then
+		mkdir -m 755 ${STATEDIR}
+	fi
+	echo -n "Starting SNTP Client daemon:            "
+	echo "${SNTP} -r -x ${SYNC} -P no -l ${PIDFILE} -f ${STATEDIR}${STATEFILE} ${SERVER} &"
+	${SNTP} -r -x ${SYNC} -P no -l ${PIDFILE} -f ${STATEDIR}${STATEFILE} ${SERVER} &
+  fi
+}
+
+sntp_stop() {
+  killall sntp
+  rm -f $PIDFILE 2>/dev/null
+}
+
+sntp_restart() {
+  sntp_stop
+  sleep 2
+  sntp_start
+}
+
+case "$1" in
+'start')
+  sntp_start
+  ;;
+'stop')
+  sntp_stop
+  ;;
+'restart')
+  sntp_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+  ;;
+esac

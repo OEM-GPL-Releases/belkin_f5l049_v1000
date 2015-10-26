@@ -1,0 +1,226 @@
+#!/bin/sh
+
+# config
+CONTROLDATA=
+NASCONF="/etc/silex/nas.conf"
+SMBSH="/usr/sbin/samba.sh"
+FTPSH="/usr/sbin/vsftpd.sh"
+RCPATH=
+RCSMB=
+RCFTP=
+ACTION="restart"
+
+TMPPATH=
+ERRMSG=
+# check value nas.conf
+check_nasconf() {
+	TMP=`sxsysconf -f ${NASCONF} SHAREDIR`
+	if [ "$?" -ne "0" -a ! -d "$TMP" ]; then
+		ERRMSG="SHAREDIR"
+		return 1
+	fi
+
+	TMP=`sxsysconf -f ${NASCONF} TMPDIR`
+	if [ "$?" -ne "0" -a ! -d "$TMP" ]; then
+		ERRMSG="TMPDIR"
+		return 1
+	fi
+	TMPPATH=$TMP
+
+	TMP=`sxsysconf -f ${NASCONF} DRVNAME`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="DRVNAME no value"
+		return 1
+	fi
+	TMP2=`sxstrchr -s $TMP -c "\\/:*?<>|\""`
+	if [ "$?" -eq "0" -a "$TMP2" -ge "0" ]; then
+		TMP2=`echo $TMP | cut -c $TMP2`
+		ERRMSG="DRVNAME can not use charactor ($TMP2)"
+		return 1
+	fi
+
+	TMP=`sxsysconf -f ${NASCONF} VLABEL 2>/dev/null`
+	if [ -n "$TMP" ]; then
+		TMP2=`sxstrchr -s $TMP -c "\\/:*?<>|\""`
+		if [ "$?" -eq "0" -a "$TMP2" -ge "0" ]; then
+			TMP2=`echo $TMP | cut -c $TMP2`
+			ERRMSG="VLABEL can not use charactor ($TMP2)"
+			return 1
+		fi
+	fi
+
+	TMP=`sxsysconf -f ${NASCONF} DMOUNT`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="DMOUNT no value"
+		return 1
+	else
+		TMP2=`echo $TMP | tr -d [:digit:]`
+		if [ -n "$TMP2" ]; then
+			ERRMSG="DMOUNT undefined value"
+			return 1
+		elif [ "$TMP" -lt "0" -a "$TMP" -gt "8" ]; then
+			ERRMSG="DMOUNT undefined value"
+			return 1
+		fi
+	fi
+
+	TMP=`sxsysconf -f ${NASCONF} MAXPART`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="MAXPART no value"
+		return 1
+	else
+		TMP2=`echo $TMP | tr -d [:digit:]`
+		if [ -n "$TMP2" ]; then
+			ERRMSG="MAXPART undefined value"
+			return 1
+		elif [ "$TMP" -lt "0" -a "$TMP" -gt "15" ]; then
+			ERRMSG="MAXPART undefined value"
+			return 1
+		fi
+	fi
+
+	TMP=`sxsysconf -f ${NASCONF} MNTGID`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="MNTGID no value"
+		return 1
+	else
+		TMP=`echo $TMP | tr -d [:digit:]`
+		if [ -n "$TMP" ]; then
+			ERRMSG="MNTGID undefined value"
+			return 1
+		fi
+	fi
+
+	TMP=`sxsysconf -f ${NASCONF} SMB_ADMIN`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="SMB_ADMIN no value"
+		return 1
+	fi
+
+	TMP=`sxsysconf -f ${NASCONF} SMB_MAXCON`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="SMB_MAXCON no value"
+		return 1
+	else
+		TMP2=`echo $TMP | tr -d [:digit:]`
+		if [ -n "$TMP2" ]; then
+			ERRMSG="SMB_MAXCON undefined value"
+			return 1
+		elif [ "$TMP" -lt "0" -a "$TMP" -gt "20" ]; then
+			ERRMSG="SMB_MAXCON undefined value"
+			return 1
+		fi
+	fi
+
+	return 0
+}
+
+# check value control data
+check_controldata() {
+
+	TMP=`sxsysconf -f ${CONTROLDATA} NAS_ACTRL | tr "a-z" "A-Z"`
+	if [ -z "$TMP" ]; then
+		ERRMSG="NAS_ACTRL no value"
+		return 1
+	elif [ "$TMP" != "DISABLE" -a "$TMP" != "ENABLE" ]; then
+		ERRMSG="NAS_ACTRL undefined value"
+		return 1
+	fi
+
+	ERRMSG="SMB_WINS_PRIMARY"
+	WINS=`sxsysconf -f ${CONTROLDATA} SMB_WINS_PRIMARY`
+	if [ "$?" -ne "0" -o -z "$WINS" ]; then
+		return 1
+	fi
+	I=1
+	while [ "$I" -ne "0" ]; do
+		TMP=`echo $WINS | cut -d "." -f $I`
+		TMP2=`echo $TMP | tr -d [:digit:]`
+		if [ -z "$TMP" ]; then
+			if [ "$I" -ne "5" ]; then
+				return 1
+			fi
+			break
+		elif [ -n "$TMP2" ]; then
+			return 1
+		elif [ "$TMP" -lt "0" -o "$TMP" -gt "255" ]; then
+			return 1
+		fi
+		I=`expr $I + 1`
+	done
+
+	TMP=`sxsysconf -f ${CONTROLDATA} SMB_WORK_GROUP`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="SMB_WORK_GROUP"
+		return 1
+	fi
+
+	TMP=`sxsysconf -f ${CONTROLDATA} SMB_SERVER_STRING`
+	if [ "$?" -ne "0" -o -z "$TMP" ]; then
+		ERRMSG="SMB_SERVER_STRING"
+		return 1
+	fi
+
+	return 0
+}
+
+# start script *****************
+if [ "$#" -lt "2" ]; then
+	echo "Usage : $0 [-c {contorol data path}]"
+	exit 1
+fi
+if [ "$1" != "-c" ]; then
+	echo "Usage : $0 [-c {contorol data path}]"
+	exit 1
+fi
+
+
+CONTROLDATA="$2"
+if [ ! -r "$CONTROLDATA" ]; then
+	echo "error sxnasctrl(nothing control data)"
+	exit 1
+fi
+
+if [ ! -r "$NASCONF" ]; then
+	echo "error sxnasctrl(nothing $NASCONF)"
+	exit 1
+fi
+
+# check it whether data is right
+check_nasconf
+if [ "$?" = "1" ]; then
+	echo "error sxnasctrl(check_nasconf) - $ERRMSG"
+	exit 1
+fi
+
+check_controldata
+if [ "$?" = "1" ]; then
+	echo "error sxnasctrl(check_controldata) - $ERRMSG"
+	exit 1
+fi
+
+# create smb.conf
+if [ -x "$SMBSH" ]; then
+	${SMBSH} ${NASCONF} ${CONTROLDATA}
+fi
+
+RCPATH=`sxsysconf -f ${NASCONF} RC_PATH`
+
+# restart
+RCSMB="${RCPATH}/rc.samba"
+if [ -x "$RCSMB" ]; then
+	${RCSMB} ${ACTION}
+fi
+
+# Create vsftpd.conf
+if [ -x "${FTPSH}" ]; then
+	${FTPSH} ${CONTROLDATA}
+fi
+
+# Restart ftpd
+RCFTP="${RCPATH}/rc.vsftpd"
+if [ -x "${RCFTP}" ]; then
+	${RCFTP} ${ACTION}
+fi
+
+exit 0

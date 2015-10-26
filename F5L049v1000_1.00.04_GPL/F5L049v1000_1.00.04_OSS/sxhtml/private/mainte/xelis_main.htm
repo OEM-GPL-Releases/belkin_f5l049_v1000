@@ -1,0 +1,39 @@
+<html>
+<head>
+<link rel="stylesheet" href="/css/main.css" type="text/css">
+<title>Debug Page</title>
+<script type="text/javascript">
+<!--
+	parent.currentpage = location.pathname;
+	function DoSubmit()	{
+		top.hide.DoSubmit();
+		return false;
+	}
+//-->
+</script>
+</head>
+<body class="main">
+<form action="./result_main.htm" onSubmit="return DoSubmit(this)" method="post">
+	<table width="100%" style="border:1px solid orange;" bgcolor="#ccffff">
+		<tr>
+			<td class="contents1_180">
+			<td></td>
+		</tr>
+		<tr>
+			<td class="contents2" align="center">Telnet Control</td>
+			<td class="Info2" align="left">
+				<j VARID_TELNET_FLAG>
+				&nbsp;&nbsp;&nbsp;
+				<input type="submit" value="Set Value" class="button_debug">&nbsp;
+				<input type="button" value="Logout" class="button_debug" onclick="location.href='./logout_main.htm'">
+			</td>
+		</tr>
+	</table>
+</form>
+<script type="text/javascript">
+<!--
+top.hide.Callback();
+//-->
+</script>
+</body>
+</html>

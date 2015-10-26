@@ -1,0 +1,47 @@
+#!/bin/sh
+
+LEDPATH="/proc/silex/led"
+
+USBPATH=
+USBPORT=
+
+if [ "$ACTION" != "add" ]; then
+	exit 1
+fi
+
+if [ $PHYSDEVPATH ]; then
+	USBPATH=`sxusbport -u $PHYSDEVPATH`
+else
+	SCSIPATH=`sxusbport -s $DEVPATH`
+	USBPATH=`sxusbport -u $SCSIPATH`
+fi
+
+USBPORT=`sxusbport -p $USBPATH`
+if [ $? -ne 0 ]; then
+	exit 1
+fi
+
+TMP1=`echo $USBPORT | cut -d "." -f 1-2`
+if [ "$?" -ne "0" -o -z "$TMP1" ]; then
+	exit 1
+fi
+
+TMP2=`echo $USBPORT | cut -d "." -f 3`
+if [ "$?" -ne "0" -o -z "$TMP2" ]; then
+	exit 1
+fi
+
+TMP3=`echo $USBPORT | cut -d "." -f 4-`
+if [ -n "$TMP3" ]; then
+	exit 1
+fi
+
+if [ "$TMP1" != "1.1" ]; then
+	exit 1
+fi
+if [ $TMP2 -ge 5 ]; then
+	exit 1
+fi
+
+echo "200 2 2 3 0 0 0" > $LEDPATH/$TMP2
+

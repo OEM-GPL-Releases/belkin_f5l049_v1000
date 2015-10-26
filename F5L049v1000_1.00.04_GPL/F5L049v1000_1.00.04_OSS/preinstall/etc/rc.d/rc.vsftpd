@@ -1,0 +1,36 @@
+#!/bin/sh
+
+VSFTPD=/usr/sbin/vsftpd
+
+ftpd_start() {
+  if [ -x ${VSFTPD} ]; then
+	echo -n "Starting vsftpd:                        "
+	echo "${VSFTPD} &"
+	${VSFTPD} 2>/dev/null &
+  fi
+}
+
+ftpd_stop() {
+  killall vsftpd 2>/dev/null
+}
+
+ftpd_restart() {
+  ftpd_stop
+  sleep 2
+  ftpd_start
+}
+
+case "$1" in
+'start')
+  ftpd_start
+  ;;
+'stop')
+  ftpd_stop
+  ;;
+'restart')
+  ftpd_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+  ;;
+esac

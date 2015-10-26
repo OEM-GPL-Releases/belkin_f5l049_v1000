@@ -1,0 +1,29 @@
+#!/sbin/runscript
+# $Id: avahi-dnsconfd.in 1596 2007-12-17 13:30:07Z lennart $
+# Copyright 1999-2007 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+opts="reload"
+
+depend() {
+	need avahi-daemon
+	use net
+}
+
+start() {
+	ebegin "Starting avahi-dnsconfd"
+	@sbindir@/avahi-dnsconfd -D
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping avahi-dnsconfd"
+	@sbindir@/avahi-dnsconfd -k
+	eend $?
+}
+
+reload() {
+	ebegin "Reloading avahi-dnsconfd"
+	@sbindir@/avahi-dnsconfd -r
+	eend $?
+}

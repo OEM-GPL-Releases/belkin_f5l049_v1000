@@ -1,0 +1,211 @@
+@charset "UTF-8";
+
+/* Anchor definition -----------------------------------------------*/
+a:link {   /* When the link doesn't visit */
+	color:#181E5C;
+	text-decoration:none
+}
+a:visited {   /* visited */
+	color:#181E5C;
+	text-decoration:none
+}
+a:active {
+	text-decoration:none
+}
+a:hover {   /* on mouse */
+	color:white;
+	background-color:#181E5C;
+}
+
+/* BODY definition -------------------------------------------------*/
+body.menu {
+	margin-bottom:10px;
+	margin-right:0px;
+	margin-left:10px;
+	margin-top:10px;
+}
+
+/* input definition ------------------------------------------------*/
+
+input {
+	font-family: "MS UI Gothic",sans-serif;
+	font-size:13px;
+}
+
+select {
+	font-family: "MS UI Gothic",sans-serif;
+	font-size:13px;
+}
+
+/* Image definition ------------------------------------------------*/
+img {
+	border:0px solid white;
+}
+
+/* Table definition ------------------------------------------------*/
+table {
+	font-family: "MS UI Gothic", sans-serif;
+	color:#181E5C;
+	border-collapse:collapse;
+	width:170px;
+	font-size:13px;
+}
+
+table.maintbl {
+	width:100%;
+	height:98%;
+}
+
+td.topleft {
+	/* upper left corner blue belt */
+	border-left:solid 10px #181E5C;
+	border-top:solid 10px #181E5C;
+}
+
+td.topright {
+	/* upper right corner blue belt */
+	border-top:solid 10px #181E5C;
+	border-right:solid 10px #181E5C;
+}
+
+td.topline {
+	/* upper blue belt */
+	border-top:solid 10px #181E5C;
+}
+
+td.leftline {
+	/* left blue belt */
+	border-left:solid 10px #181E5C;
+}
+
+td.rightline {
+	/* right blue belt */
+	border-right:solid 10px #181E5C;
+}
+
+td.inline {
+	/* belkin logo frame */
+	border:solid 1px #181E5C;
+	text-align:center;
+}
+
+td.top_ceparate {
+	border-top:solid 2px #181E5C;
+	border-right:solid 1px #181E5C;
+	border-left:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+}
+
+td.bottom_ceparate {
+	border-top:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+	border-left:solid 1px #181E5C;
+	border-bottom:solid 2px #181E5C;
+}
+
+td.printer {
+	border-top:solid 1px #181E5C;
+	border-left:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+	text-align:center;
+}
+
+td.name {
+	border-top:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+	text-align:left;
+	font-weight:bold;
+	font-size:14px;
+	color:#c40000;
+}
+
+td.menu {
+	border-right:solid 1px #181E5C;
+	border-left:solid 1px #181E5C;
+	vertical-align:middle;
+}
+
+td.menu2 {
+	background-color:lightsteelblue;
+	border-right:solid 1px #181E5C;
+	border-left:solid 1px #181E5C;
+	vertical-align:middle;
+}
+
+td.menu_down {
+	border-right:solid 1px #181E5C;
+	border-left:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+	padding-bottom:5px;
+	vertical-align:middle;
+}
+
+td.down_left {
+	/* menu : under left frame */
+	border-left:solid 10px #181E5C;
+}
+
+td.down_right {
+	/* menu : under right frame */
+	border-right:solid 10px #181E5C;
+}
+
+td.down_center {
+	border-left:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+}
+
+td.down_center_3 {
+	border-left:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+	text-align:center;
+}
+
+td.inline_2 {
+	border-right:solid 1px #181E5C;
+	border-left:solid 1px #181E5C;
+	text-align:center;
+}
+
+td.machine {
+	font-family: Arial;
+	padding-top:5px;
+	border:solid 1px #181E5C;
+	text-align:center;
+	font-weight:bold;
+	font-size:17px;
+	color:#c40000;
+}
+
+td.down_left_2 {
+	border-left:solid 10px #181E5C;
+	border-bottom:solid 1px #181E5C;
+}
+
+td.down_right_2 {
+	border-right:solid 10px #181E5C;
+	border-bottom:solid 1px #181E5C;
+}
+
+/* Define Line ------------------------------------------------- */
+.line5x5 {
+	width:5px;
+	height:5px;
+}
+
+.line5x15 {
+	width:5px;
+	height:15px;
+}
+
+.line5x50 {
+	width:5px;
+	height:50px;
+}
+
+.line5x58 {
+	width:5px;
+	height:58px;
+}

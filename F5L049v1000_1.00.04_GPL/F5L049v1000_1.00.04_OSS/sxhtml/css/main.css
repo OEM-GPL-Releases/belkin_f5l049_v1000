@@ -1,0 +1,388 @@
+@charset "UTF-8";
+
+/* Anchor definition -----------------------------------------------*/
+a:link {   /* When the link doesn't visit */
+	color:#181E5C;
+	text-decoration:none
+}
+a:visited {   /* visited */
+	color:#181E5C;
+	text-decoration:none
+}
+a:active {
+	color:#181E5C;
+	text-decoration:none
+}
+a:hover {   /* on mouse */
+	color:white;
+	background-color:#181E5C;
+}
+
+/* BODY definition -------------------------------------------------*/
+body.main {
+	margin-top:10px;
+	margin-bottom:10px;
+	margin-right:17px;
+	margin-left:0px;
+}
+
+/* Image definition ------------------------------------------------*/
+img {
+	border:0px solid white;
+	vertical-align:middle;
+}
+
+/* input definition ------------------------------------------------*/
+
+input {
+	font-family: "MS UI Gothic",sans-serif;
+	font-size:13px;
+}
+
+select {
+	font-family: "MS UI Gothic",sans-serif;
+	font-size:13px;
+}
+
+/* Table definition ------------------------------------------------*/
+table {
+	font-family: "MS UI Gothic",sans-serif;
+	color:#181E5C;
+	border-collapse:collapse;
+	font-size:13px;
+}
+
+table.maintbl {
+	width:100%;
+	height:98%;
+}
+
+/* TR defienition -------------------------------------------------*/
+tr.header {
+	height:1px;
+}
+
+tr.title {
+	height:73px;
+}
+
+tr.tab {
+	height:25px;
+}
+
+tr.main {
+	height:100%
+}
+
+/* TD defienition -------------------------------------------------*/
+td.maintop {
+	vertical-align:top;
+	padding-left:20px;
+	border-left:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+}
+
+td.maincmt {
+	height:20px;
+}
+
+td.reload {
+	padding-right:10px;
+	text-align:right;
+}
+
+td.help {
+	padding-right:2px;
+	text-align:right;
+}
+
+td.contname {
+	text-align:left;
+}
+
+td.w5h5 {
+	width:5px;
+	height:5px;
+}
+
+/* Main:out frame ------------------------------------------------------*/
+td.out_lefttop {
+	/* main : setting frame : Upper left big frame */
+	width:20px;
+	height:20px;
+	border-left:3px solid #181E5C;
+	border-top:3px solid #181E5C;
+	border-bottom:1px solid white;
+	border-right:1px solid white;
+}
+td.out_leftbottom {
+	/* main : setting frame : the left under big frame */
+	border-left:3px solid #181E5C;
+	border-bottom:3px solid #181E5C;
+	height:20px;
+}
+td.out_righttop {
+	/* main : setting frame : Upper right big frame */
+	border-top:3px solid #181E5C;
+	border-right:3px solid #181E5C;
+	border-bottom:2px solid white;
+	width:20px;
+}
+td.out_rightbottom {
+	/* main : setting frame : the right under big frame */
+	border-right:3px solid #181E5C;
+	border-bottom:3px solid #181E5C;
+}
+td.out_left {
+	/* main : setting frame : left frame */
+	border-left:2px solid lightsteelblue;
+}
+td.out_top {
+	/* main : setting frame : Upper frame */
+	border-top:2px solid lightsteelblue;
+}
+td.out_right {
+	/* main : setting frame : right frame */
+	border-right:2px solid lightsteelblue;
+}
+td.out_bottom {
+	/* main : setting frame : under frame */
+	border-left:1px solid white;
+	border-bottom:2px solid lightsteelblue;
+}
+td.topinline_help {
+	text-align:right;
+	width:100%;
+	vertical-align:bottom;
+	padding-bottom:5px;
+}
+
+td.contents1 {
+	/* main :[item name]title, bgcolor */
+	background-color:lightsteelblue;
+	border-right:1px solid white;
+	padding-left:20px;
+	height:20px;
+}
+
+td.contents1_c {
+	/* main :[item name]title, bgcolor, center */
+	background-color:lightsteelblue;
+	border-right:1px solid white;
+	text-align:center;
+	height:20px;
+}
+
+td.contents1_180 {
+	/* main :[item name]title, bgcolor, width 220px */
+	background-color:white;
+	padding-left:20px;
+	height:1px;
+	width:220px;
+}
+
+td.contents1_250 {
+	/* main :[item name]title, bgcolor, width 250px */
+	background-color:white;
+	border-right:1px solid white;
+	padding-left:20px;
+	width:250px;
+}
+
+td.Info1 {
+	/* main :[item name]title, bgcolor, no right line */
+	background-color:white;
+	padding-left:20px;
+}
+
+td.Info1_c {
+	/* main :[item name]title, bgcolor, no right line, center */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+}
+
+td.Info1_s {
+	/* main :[item name]title, right and left line, hight 3px */
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid lightsteelblue;
+	height:3px;
+}
+
+td.contents2 {
+	/* main :[item name]title, right and left line, left space, up arrangement */
+	vertical-align:top;
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid white;
+	padding-top:13px;
+	padding-left:20px;
+	padding-bottom:13px;
+}
+
+td.Info2 {
+	/* main :[item name]title, right and left line, left space */
+	border-left:1px solid white;
+	border-right:1px solid lightsteelblue;
+	padding-left:20px;
+	padding-right:5px;
+	padding-bottom:3px;
+}
+
+td.contents2s {
+	/* main :[item name]right and left line, under dott line, left space, up arrangement */
+	/* use status */
+	vertical-align:top;
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid white;
+	padding-top:10px;
+	padding-left:20px;
+	padding-bottom:7px;
+}
+
+td.contents2sh {
+	/* main :[item name]right and left line, under dott line, left space, up arrangement, orange color */
+	/* use status, Separate group */
+	vertical-align:top;
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid lightsteelblue;
+	border-bottom:1px dotted white;
+	padding-left:20px;
+	color:seagreen;
+}
+
+td.Info2s {
+	/* main :[item name]right and left line, under dott line, left space */
+	/* use status */
+	border-left:1px solid white;
+	border-right:1px solid lightsteelblue;
+	border-bottom:1px white;
+	padding-left:20px;
+}
+
+td.Info2sc {
+	/* main :[item name]right and left line, under dott line, center */
+	/* use status */
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid lightsteelblue;
+	border-bottom:1px dotted lightsteelblue;
+	text-align:center;
+}
+
+td.Info2s_c {
+	/* main :[item name]right and left line, under dott line */
+	/* use int <td> tag */
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid lightsteelblue;
+	border-bottom:1px dotted lightsteelblue;
+}
+
+/* restart page : bar -----------------------------------------------*/
+div.ref_bar1 {
+	background-color:#b0c4ea;
+	height:10px;
+	text-align: center;
+}
+
+/* button ----------------------------------------------------------*/
+.button {
+	background-color:lightsteelblue;
+}
+.button1 {
+	background-color:lightsteelblue;
+	width:80px;
+}
+.button_debug {
+	background-color:orange;
+	width:80px;
+}
+
+/* list page : List ---------------------------------------------*/
+td.select1 {
+	/* main : wireless : [select]make title, bgcolor */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+	width:50px;
+}
+
+td.select2 {
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid lightsteelblue;
+	text-align:center;
+}
+
+td.ssid1 {
+	/* main : wireless : [SSID]make title, bgcolor */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+	width:300px;
+}
+
+td.ssid2 {
+	border-left:1px solid lightsteelblue;
+	border-right:0px solid lightsteelblue;
+}
+
+td.sec1 {
+	/* main : wireless : [electric wave](left) make title, bgcolor */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+	width:20px;
+}
+
+td.sec2 {
+	/* main : wireless : [electric wave](key) */
+	border-left:0px solid lightsteelblue;
+	border-right:0px solid lightsteelblue;
+	text-align:center;
+}
+
+td.rssi1 {
+	/* main : wireless : [electric wave](right)make title, bgcolor */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+	width:50px;
+}
+
+td.rssi2 {
+	/* main : wireless : [electric wave] */
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid lightsteelblue;
+	text-align:center;
+}
+
+td.ch1 {
+	/* main : wireless : [CH]make title, bgcolor */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+	width:50px;
+}
+
+td.wcenter {
+	/* main : wireless : [CH] */
+	/* main : wireless : [wireless mode] */
+	/* main : wireless : [Communication type] */
+	border-left:1px solid lightsteelblue;
+	border-right:1px solid lightsteelblue;
+	text-align:center;
+}
+
+td.mode1 {
+	/* main : wireless : [wireless mode]make title, bgcolor */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+	width:100px;
+}
+
+td.type1 {
+	/* main : wireless : [Communication type]make title, bgcolor */
+	background-color:lightsteelblue;
+	text-align:center;
+	height:20px;
+	width:150px;
+}

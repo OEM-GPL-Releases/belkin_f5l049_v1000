@@ -1,0 +1,37 @@
+#!/bin/sh
+
+HOTPLUGD=/usr/sbin/hotplugd
+
+hotplug_start() {
+	if [ -x ${HOTPLUGD} ]; then
+		echo -n "Starting HotPlug:                       "
+		EXEC_HOTPLUGD="${HOTPLUGD} -D -w -f"
+		echo ${EXEC_HOTPLUGD}
+		${EXEC_HOTPLUGD}
+	fi
+}
+
+
+hotplug_stop() {
+	/usr/sbin/sxmount umount
+	killall hotplugd 2>/dev/null
+}
+
+
+hotplug_restart() {
+	hotplug_stop
+	sleep 1
+	hotplug_start
+}
+
+
+case "$1" in
+'start')
+	hotplug_start ;;
+'stop')
+	hotplug_stop ;;
+'restart')
+	hotplug_restart ;;
+*)
+	echo "usage $0 start|stop|restart"
+esac

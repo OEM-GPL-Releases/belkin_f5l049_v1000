@@ -1,0 +1,87 @@
+#!/bin/sh
+
+conf_file="/etc/wpa_supplicant.conf"
+pin_file="/etc/sysconfig/wps.pin"
+pid_file="/var/run/wpa_supplicant.pid"
+log_file="/var/log/wps_supplicant.log"
+
+if [ "${interface}" == "" ]; then
+	interface="eth0"
+fi
+
+# ----
+if [ ! -f ${pid_file} ] ; then
+	isAlive=0
+	isWPS="0"
+else
+	isAlive=1
+	isWPS="`echo ${command} | grep -E Mpin\|Mpbc | wc -l`"
+fi
+
+command="-w -dd -Dmadwifi -i${interface} -c${conf_file} -f${log_file}"
+new_command="`echo ${command} | sed -e 's/-Mpin\|-Mpbc//g'`"
+PID="`ps www | grep wpa_supplicant | grep -v grep | awk '{print $1}' | xargs`"
+
+# ----
+# if wpa config not found then make config
+make_wpsconf() {
+
+if [ ! -e ${conf_file} ] ; then
+cat >${conf_file}<<__EOF__
+network={
+
+}
+__EOF__
+fi
+}
+
+# ----
+# make pinfile : this system only use sxsysconf
+make_pinfile() {
+# if [ ! -e ${pin_file} ] ; then
+	pin_code="`sxsysconf WL_WPS_PIN`"
+	echo -n "$pin_code" > ${pin_file}
+# else
+# 	pin_code="`cat ${pin_file}`"
+# fi
+}
+
+# ----
+# subs
+test () 
+{
+echo "
+wps_supplicant : $wps_supplicant
+interface : $interface
+conf_file : $conf_file
+pin_file : $pin_file
+pid_file : $pid_file
+pin_code : $pin_code
+isAlive : $isAlive
+command : $command
+PID : $PID
+" ;
+
+}
+
+kill_wpa_supplicant ()
+{
+	kill `ps w| grep wpa_supplicant | grep -v grep | awk '{print $1}'`
+}
+
+do_wpa_supplicant ()
+{
+_mode=${1}
+
+	kill_wpa_supplicant
+	sleep 1
+	ifconfig ${interface} down
+	sleep 1
+	echo "wpa_supplicant ${new_command} -M${_mode}"
+	wpa_supplicant ${new_command} -M${_mode} 
+}
+
+# --
+make_wpsconf
+make_pinfile
+

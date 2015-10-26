@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<j mmtype>
+<link rel="stylesheet" href="/css/main.css" type="text/css">
+<script type="text/javascript" src="/<j dir_path>/main.js"></script>
+<title>contents</title>
+<script type="text/javascript">
+<!--
+parent.currentpage = location.pathname;
+function DoSubmit()
+{
+	top.hide.DoSubmit();
+	return false;
+}
+
+function grayout(){
+	var chkObj = document.getElementById("USE_DHCP0");
+	if (chkObj.checked) {
+		document.forms[0].IPADDR0.disabled = true;
+		document.forms[0].NETMASK0.disabled = true;
+		document.forms[0].GATEWAY.disabled = true;
+		document.forms[0].DNS_PRIMARY.disabled = true;
+		document.forms[0].DNS_SECONDARY.disabled = true;
+	}
+	else{
+		document.forms[0].IPADDR0.disabled = false;
+		document.forms[0].NETMASK0.disabled = false;
+		document.forms[0].GATEWAY.disabled = false;
+		document.forms[0].DNS_PRIMARY.disabled = false;
+		document.forms[0].DNS_SECONDARY.disabled = false;
+	}
+}
+//-->
+</script>
+</head>
+<body class="main" onLoad="grayout()">
+<script type="text/javascript">
+<!--
+awk85_br()
+//-->
+</script>
+<form action="./result_main.htm" onSubmit="return DoSubmit(this)" method="post">
+
+<table width="100%" border=0 cellpadding=0 cellspacing=0>
+<tr>
+	<td class="maincmt">&nbsp;</td>
+	<td class="topinline_help">
+		&nbsp;&nbsp;
+		<img src="/images/logout.gif" alt="logout">&nbsp;<a href="./logout_main.htm"><j mlword:MSGID_LOGOUT></a>&nbsp;&nbsp;
+		<img src="/images/help.gif" alt="help">&nbsp;<a href="javascript:HelpWindow(parent.menuid , parent.submenu)"><j mlword:MSGID_HELP></a>
+	</td>
+</tr>
+</table>
+<table width="100%" border=0 cellpadding=0 cellspacing=0>
+<tr>
+	<td class="out_lefttop">&nbsp;</td>
+	<td class="out_top">&nbsp;</td>
+	<td class="out_righttop">&nbsp;</td>
+</tr>
+<tr>
+	<td class="out_left">&nbsp;</td>
+	<td class="calign">
+		<table width="100%" border=0 cellpadding=0 cellspacing=0>
+			<tr><td class="contname"><img src="/images/subpoint.gif" alt="">&nbsp;&nbsp;<j mlword:MSGID_TCPIP></td></tr>
+		</table>
+		<table width="100%" style="border:1px solid lightsteelblue;">
+			<tr><td class="contents1_180"><td></td></tr>
+
+			<tr><td class="contents2"><j ctx_menu:USE_DHCP0></td>
+				<td class="Info2">
+					<script type="text/javascript">
+					<!--
+						if ("<j ctx_disp:USE_DHCP0>" == "ENABLE"){
+							with(document)
+								write('<input type="checkbox" name=<j ctx_name:USE_DHCP0> id=<j ctx_name:USE_DHCP0> value="ENABLE" onclick="grayout()" checked>');
+						}
+						else{
+							with(document)
+								write('<input type="checkbox" name=<j ctx_name:USE_DHCP0> id=<j ctx_name:USE_DHCP0> value="ENABLE" onclick="grayout()">');
+						}
+					//-->
+					</script>
+					<input type="hidden" name=<j ctx_name:USE_DHCP0> id=<j ctx_name:USE_DHCP0> value="DISABLE">
+				</td>
+			</tr>
+
+			<tr><td class="contents2"><j ctx_menu:IPADDR0></td>
+			<td class="Info2"><j ctx_form:IPADDR0></td></tr>
+			<tr><td class="contents2"><j ctx_menu:NETMASK0></td>
+			<td class="Info2"><j ctx_form:NETMASK0></td></tr>
+			<tr><td class="contents2"><j ctx_menu:GATEWAY></td>
+			<td class="Info2"><j ctx_form:GATEWAY></td></tr>
+		</table><br>
+		<table width="100%" border=0 cellpadding=0 cellspacing=0>
+			<tr><td class="contname"><img src="/images/subpoint.gif" alt="">&nbsp;&nbsp;<j mlword:MSGID_DNS></td></tr>
+		</table>
+		<table width="100%" style="border:1px solid lightsteelblue;">
+			<tr><td class="contents1_180"><td></td></tr>
+			<tr><td class="contents2"><j ctx_menu:DNS_PRIMARY></td><td class="Info2"><j ctx_form:DNS_PRIMARY></td></tr>
+			<tr><td class="contents2"><j ctx_menu:DNS_SECONDARY></td><td class="Info2"><j ctx_form:DNS_SECONDARY></td></tr>
+		</table><br>
+		<table width="100%" border=0 cellpadding=0 cellspacing=0>
+			<tr><td class="contname"><img src="/images/subpoint.gif" alt="">&nbsp;&nbsp;<j mlword:MSGID_WINS></td></tr>
+		</table>
+		<table width="100%" style="border:1px solid lightsteelblue;">
+			<tr><td class="contents1_180"><td></td></tr>
+			<tr><td class="contents2"><j ctx_menu:SMB_WINS_PRIMARY></td><td class="Info2"><j ctx_form:SMB_WINS_PRIMARY></td></tr>
+			<tr><td class="contents2"><j ctx_menu:SMB_SERVER_STRING></td><td class="Info2"><j ctx_form:SMB_SERVER_STRING></td></tr>
+			<tr><td class="contents2"><j ctx_menu:SMB_WORK_GROUP></td><td class="Info2"><j ctx_form:SMB_WORK_GROUP></td></tr>
+		</table><br>
+		<table width="100%" border=0 cellpadding=0 cellspacing=0>
+			<tr><td class="contname"><img src="/images/subpoint.gif" alt="">&nbsp;&nbsp;<j mlword:MSGID_PROXY></td></tr>
+		</table>
+		<table width="100%" style="border:1px solid lightsteelblue;">
+			<tr><td class="contents1_180"><td></td></tr>
+			<tr><td class="contents2"><j ctx_menu:HTTP_PROXY_ADDR></td><td class="Info2"><j ctx_form:HTTP_PROXY_ADDR></td></tr>
+			<tr><td class="contents2"><j ctx_menu:HTTP_PROXY_PORT></td><td class="Info2"><j ctx_form:HTTP_PROXY_PORT></td></tr>
+		</table><br>
+	</td>
+	<td class="out_right">&nbsp;</td>
+</tr>
+<tr>
+	<td class="out_left">&nbsp;</td>
+	<td>&nbsp;</td>
+	<td class="out_right">&nbsp;</td>
+</tr>
+<tr>
+	<td class="out_left">&nbsp;</td>
+	<td align="right">
+		<input type="submit" value="<j mlword:MSGID_SUBMIT>" class="button">&nbsp;&nbsp;&nbsp;&nbsp;
+	</td>
+	<td class="out_right">&nbsp;</td>
+</tr>
+<tr>
+	<td class="out_leftbottom">&nbsp;</td>
+	<td class="out_bottom">&nbsp;</td>
+	<td class="out_rightbottom">&nbsp;</td>
+</tr>
+</table><br>
+</form>
+<script type="text/javascript">
+<!--
+top.hide.Callback();
+//-->
+</SCRIPT>
+</body>
+</html>

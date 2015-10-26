@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# Name: wps_pin
+#    WPS supplicant with PIN mode is easily ecexuted.
+##########################################################
+# Refer to usage of WPA supplicant for the meaning of each option. 
+. /usr/sbin/wps_subs
+
+# Main 
+echo "...Start new WPA supplicant with WPS PIN !"
+do_wpa_supplicant "pin"
+

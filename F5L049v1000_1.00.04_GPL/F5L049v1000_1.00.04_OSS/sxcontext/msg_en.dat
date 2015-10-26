@@ -1,0 +1,138 @@
+Password
+This page use JavaScript.
+This page use frame.
+Login
+Logout
+Status
+Save
+Reset
+Reference
+Upload
+Save
+Language
+Refresh
+Help
+Yes
+No
+Select one
+ integer
+ Character String
+ letters[max.]
+(Password)
+(Japanese)
+(ESC character string)
+IP address
+Status
+System
+USB
+Wireless
+Configuration
+General
+TCP/IP
+Network Time Configuration (NTP)
+Media Server Configuration
+USB Port Mode
+Wireless LAN
+Maintenance
+Restart
+Factory Default
+Syslog
+Upgrade Firmware
+Syslog
+Belkin Global Site
+System Status
+USB Status
+Wireless Status
+General Configuration
+TCP/IP Configuration
+Advanced Configuration
+Network Time (NTP)
+USB Storage Mode Configuration
+Wireless LAN Basic
+Restart Home Base
+Factory Default
+Firmware Upgrade
+Wireless LAN Configuration
+Firmware File
+Renewing firmware now.
+Primary DNS Server
+Secondary DNS Server
+TCP/IP
+DNS
+WINS
+PROXY
+Media Server
+USB Storage Mode 
+DHCP Server
+USB
+Device Name
+Manufacturer Name
+Connected PC
+Duration (H:M:SEC)
+Wireless LAN
+Wireless LAN Type
+Network Name (SSID)
+Channel
+Transfer Rate
+NTP
+Your settings have been saved.\nClick OK to restart Home Base.
+Setting is completed.
+Wireless Signal Strength
+WEP
+WPA/WPA2
+WPS
+Generate PIN
+Are you sure you want to restart Home Base?<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Anyone using the device will lose their connection until the restart is complete, and any active print jobs will be lost.
+Please wait while the server is restarting.
+Please wait while the public drive is refreshing.
+This will remove your Home Base from your wireless network and cancel any picture sharing and backup jobs.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You'll need to run setup to put Home Base back on the wireless network and set up your picture sharing or backup jobs again.
+Reset the Home Base to factory settings?\nThis will clear out any changes to wireless, backup, or sharing settings you may have made.
+Renew firmware?
+The IP address of this Home Base.
+The subnet mask of the network the Home Base is a member of.
+The IP address the Home Base should use to communicate with the internet.
+The IP address of the machine managing IP addresses (usually the same as the gateway).
+The DNS server(s) to be used by the Home Base to resolve hostnames.
+The IP address of a local WINS server, if any.
+The wireless standard employed by the network.
+The name of the network, or SSID.
+The chanel used to transmit and receive data.
+The speed of wireless transfer.
+Wireless signal strength indicator.
+Set an administrator password.<br>This password is used as authentication password for Web page, utility, etc.
+A friendly name for this Home Base. The name will be displayed in Control Center and may be used in other software. It should be unique within your network.
+Assign the IP address of this product. The IP address is a series of numbers separated by decimal points, for example 192.168.2.25
+The subnet mask use by your local network. This is set automatically basedon the IP address.
+The IP address Home Base will use to communicate with the internet. This is usually the address of your router.
+The IP address of an external server used to translate names into IP addresses, usually provided by your Internet Service Provider.
+Set a secondary DNS server address. When DHCP are enabled, the DNS address obtained from these servers will be given higher priority.
+The IP address of a WINS server, used to resolve the IP address from the host name. Therefore you can use a hostname instead of the IP address when printing.
+Set a proxy server address..
+Set a proxy server port number.
+Specify the workgroup that this product belongs to.
+Specify the time server.
+Set the default public drive.
+UPnP Media Player, and it is attention and as for contents added pushing when new media file is added to drive that has been opened to the public.
+The default operation of the USB ports on the HomeBase automatically connects USB storage devices to be shared in Network Attached Storage (or NAS) mode.<br><br>If you would like to change your USB ports so that USB storage devices to show on the Available Devices tab in the Control Center, you can change it to Network USB Mode.<br><br>Important:<br>Only FAT16, FAT32, and NTFS formatted drives can work in NAS mode. <br><br>Note:<br>In Network USB mode, only 1 computer can be connected to the storage device at a time.
+Enables/Disables WPS(Wi-Fi Protected Setup) function.<BR>If using an access point that supports WPS, you can easily configure the wireless settings for this product.<BR>This product supports the following 2 methods for WPS:<BR><BR>- PBC(Push Button Configuration) Method<BR>Configure the wireless settings by pushing this product's button and the access point's button in succession.<BR>- PIN Method<BR>Provide the access point with this product's PIN code, and then turn on this product to configure the wireless settings.<BR><BR>* For specifics on operating the access point, refer to its user's manual.<BR>* WPS will only work when running in wireless mode.
+The PIN code used for the WPS PIN Method is displayed. Clicking the "Generate PIN" button generates a new PIN code. A newly generated PIN code will become effective when you update the settings.<BR><BR>Providing the displayed PIN code to an access point that supports WPS will allow this product's wireless settings to be configured by the WPS PIN method.<BR><BR>*For specifics on operating the access point, refer to its user's manual.
+Select whether this product will communicate with the wireless network in Ad hoc mode or in Infrastructure mode.<br>When using an Access Point:<br>Select "Infrastructure". This product will communicate with a network device via the Access Point which has the same SSID as this product. <br>When not using an Access Point:<br>Select "Ad hoc". This product will directly communicate with a network device which has the same SSID as this product. <br>*When using this product in Ad hoc mode, the wireless standard is limited to "IEEE802.11b", and the network authentication mode is limited to "Open" or "Shared".
+Enter the SSID (up to 32 alphanumeric characters) of the wireless network to be used with this product. <br>The SSID is the ID that identifies the wireless network. Wireless devices need to have the same SSID when they communicate with each other in a wireless LAN network.
+Select the communication channel to be used by this product in the wireless LAN. <br>Set the channel only when using this product in Ad hoc mode. (There is no need to set this when running in Infrastructure mode.)<br>The wireless devices need to have the same channel when they communicate with each other. <br>If a network device has the same SSID with this product but runs in a different channel, this product will automatically switch its own channel to match it with that of the network device.
+Select the network authentication mode from Open, Shared, WPA and WPA2.<br>- Open(Open System)<br>&nbsp;&nbsp;Allow all accesses without using any authentication.<br>&nbsp;&nbsp;This mode uses WEP(64bit/128bit) to encrypt the communication. You can disable this encryption when it is not necessary. <br>- Shared(Pre-Shared Key)<br>&nbsp;&nbsp;Allow access only to network devices with the same WEP Key by using it as an authentication key. <br>&nbsp;&nbsp;This mode uses WEP(64bit/128bit) to encrypt the communication. You can disable this encryption when it is not necessary. <br>- WPA/WPA2<br>&nbsp;&nbsp;This mode uses network authentication by PSK and encrypts the communication using TKIP/AES.<br>&nbsp;&nbsp;Please note that WPA/WPA2 can be used only when this product is running in "Infrastructure" mode. 
+Enable/Disable WEP encryption.
+Set the default WEP Key from 1 to 4.<br>The Key Index needs to be identical to that of the destination device (e.g. Access Point).
+Enter the WEP Key of this product. <br>If the key format is "Hexadecimal", enter 10-digit (when the key size is "64bit") or 26-digit (when the key size is "128bit") hexadecimal characters. <br>If the key format is "Alphanumeric Character", enter 5-digit (when the key size is  "64bit") or 13-digit (when the key size is  "128bit") alphanumeric characters.
+Select the WPA/WPA2 encryption mode from AUTO, TKIP and AES. <br>If the network authentication mode is set to WPA2, TKIP cannot be selected.
+Enter the Pre-Shared Key to be used by this product. <br>When 8-63-digit are entered to the key, enter alphanumeric characters. <br>When 64-digit are entered to the key, enter hexadecimal characters.
+The name of the device as supplied by the device, or its Product ID.
+The manufacturer of the device, if reported by the device, or the Vendor ID.
+The IP address of the computer using this device, if any.
+How long that computer has been exclusively using this device.
+Set the description of this product. The information set here is shown as the description (comments) of this product in Windows Explorer.
+Specify the location of the new firmware file which will be installed.
+Restart the Home base by clicking "Restart".
+Reset this product to factory default settings, and reboot by clicking Yes.
+Display error message of Home Base.
+Visit belkin.com
+

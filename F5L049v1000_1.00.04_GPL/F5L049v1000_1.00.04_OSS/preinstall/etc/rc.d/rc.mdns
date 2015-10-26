@@ -1,0 +1,36 @@
+#!/bin/sh
+
+AVAHI_DAEMON=/usr/sbin/avahi-daemon
+
+avahi_start() {
+  if [ -x ${AVAHI_DAEMON} ]; then
+	echo -n "Starting mDNS daemon:                   "
+	echo "${AVAHI_DAEMON} -D" 
+	${AVAHI_DAEMON} -D
+  fi
+}
+
+avahi_stop() {
+  killall avahi-daemon
+}
+
+avahi_restart() {
+  avahi_stop
+  sleep 2
+  avahi_start
+}
+
+case "$1" in
+'start')
+  avahi_start
+  ;;
+'stop')
+  avahi_stop
+  ;;
+'restart')
+  avahi_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+  ;;
+esac

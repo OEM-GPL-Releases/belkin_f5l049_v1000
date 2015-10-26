@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<j mmtype>
+<link rel="stylesheet" href="/css/main.css" type="text/css">
+<script type="text/javascript" src="/<j dir_path>/main.js"></script>
+<title>contents</title>
+<script type="text/javascript">
+<!--
+var imgsrc = new Array(
+	"/images/antenna0.gif", "/images/antenna1.gif", "/images/antenna2.gif",
+	"/images/antenna3.gif", "/images/antenna4.gif", "/images/antenna5.gif"
+);
+function changeImg() {
+	val = <j dot11_rssi>;
+	document.images["antenna"].alt= val+"%";
+	document.images["antenna"].title= val+"%";
+	if ( val == 0 ) {
+		document.images["antenna"].src= imgsrc[0];
+	}
+	else if ( val >= 1 && val < 21 ) {
+		document.images["antenna"].src= imgsrc[1];
+	}
+	else if ( val >= 21 && val < 41 ) {
+		document.images["antenna"].src= imgsrc[2];
+	}
+	else if ( val >= 41 && val < 61 ) {
+		document.images["antenna"].src= imgsrc[3];
+	}
+	else if ( val >= 61 && val < 81 ) {
+		document.images["antenna"].src= imgsrc[4];
+	}
+	else if ( val >= 81 ) {
+		document.images["antenna"].src= imgsrc[5];
+	}
+}
+
+var indent = 0;
+function ContentsStart(Title)
+{
+with(document){
+	write('<tr><td class="out_left">&nbsp;<\/td><td class="calign">');
+	write('<table width="100%" border=0 cellpadding=0 cellspacing=0>');
+	write('<tr><td class="contname"><img src="/images/subpoint.gif" alt="">&nbsp;&nbsp;'+Title+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/antenna0.gif" name="antenna" alt="0%" title="0%"><\/td><\/tr>');
+	write('<\/table><table width="100%" style="border:1px solid lightsteelblue;">');
+}
+}
+function ContentsLabel(Style)
+{
+with(document){
+	write('<tr><td class="'+Style+'"></td><td></td></tr>');
+}
+}
+function ContentsGroupe(Label)
+{
+var indent_s = "";
+for(i = 0; i < indent; i++) indent_s += "&nbsp;&nbsp;&nbsp;&nbsp;";
+with(document){
+	write('<tr><td class="contents2sh" colspan=2>--- ' + indent_s + Label + ' ---<\/td><\/tr>');
+	indent++;
+}
+}
+function AddContents(Label, Data)
+{
+var indent_s = "";
+
+for(i = 0; i < indent; i++) indent_s += "&nbsp;&nbsp;&nbsp;&nbsp;";
+with(document){
+	write('<tr><td class="contents2s">' + indent_s + Label + '<\/td>');
+	write('<td class="Info2s">' + Data + '<\/td><\/tr>');
+}
+}
+function ContentsEnd()
+{
+with(document){
+	write('<\/table>');
+	write('<\/td><td class="out_right">&nbsp;<\/td><\/tr>');
+	indent=0;
+}
+}
+// -->
+</script>
+
+</head>
+
+<body class="main" OnLoad="changeImg()">
+<script type="text/javascript">
+<!--
+awk85_br()
+//-->
+</script>
+<table width="100%" border=0 cellpadding=0 cellspacing=0>
+<tr>
+	<td class="maincmt">&nbsp;</td>
+	<td class="topinline_help">
+		<img src="/images/refresh.gif" alt="refresh">&nbsp;<a href="#" onClick="location.reload();return false;"><j mlword:MSGID_REFRESH></a>&nbsp;&nbsp;
+		<img src="/images/help.gif" alt="help">&nbsp;<a href="javascript:HelpWindow(parent.menuid , parent.submenu)"><j mlword:MSGID_HELP></a>
+	</td>
+</tr>
+</table>
+<table width="100%" border=0 cellpadding=0 cellspacing=0>
+<tr>
+	<td class="out_lefttop">&nbsp;</td>
+	<td class="out_top">&nbsp;</td>
+	<td class="out_righttop">&nbsp;</td>
+</tr>
+<script type="text/javascript">
+<!--
+ContentsStart("<j mlword:MSGID_WIRELESS_INFO>");
+ContentsLabel("contents1_250");
+AddContents("<j mlword:MSGID_WIRELESS_CUR_SSID>", "<j dot11_ssid>");
+AddContents("<j mlword:MSGID_WIRELESS_LAN_STAT>", "<j dot11_cnct>");
+AddContents("<j mlword:MSGID_WIRELESS_CUR_CH>", "<j dot11_chan>");
+AddContents("<j mlword:MSGID_WIRELESS_RATE>", "<j dot11_txrate>");
+ContentsEnd();
+// -->
+</script>
+<tr>
+	<td class="out_leftbottom">&nbsp;</td>
+	<td class="out_bottom">&nbsp;</td>
+	<td class="out_rightbottom">&nbsp;</td>
+</tr>
+</table><br>
+</body>
+</html>

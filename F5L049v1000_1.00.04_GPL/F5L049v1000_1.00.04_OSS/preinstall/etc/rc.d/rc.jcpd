@@ -1,0 +1,36 @@
+#!/bin/sh
+
+JCPD=/usr/sbin/jcpd
+
+jcpd_start() {
+  if [ -x ${JCPD} ]; then
+        echo -n "Starting jcpd daemon:                   "
+        echo "${JCPD}"
+        ${JCPD}
+  fi
+}
+
+jcpd_stop() {
+  killall jcpd
+}
+
+jcpd_restart() {
+  jcpd_stop
+  sleep 2
+  jcpd_start
+}
+
+case "$1" in
+'start')
+  jcpd_start
+  ;;
+'stop')
+  jcpd_stop
+  ;;
+'restart')
+  jcpd_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+  ;;
+esac

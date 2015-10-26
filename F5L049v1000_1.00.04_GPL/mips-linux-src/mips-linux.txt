@@ -1,0 +1,314 @@
+Belkin Home Base Toolchain
+HOW TO BUILD
+
+1. Install bison, flex, texinfo and other packages required to 
+   build binutils, gcc and glibc in advance.
+
+
+2. Extract the toolchain source to your working directory.
+
+
+3. Build binutils
+
+ (In your working directory)
+ 
+ mkdir binutils-2.18-build
+ cd binutils-2.18-build
+
+ ../binutils-2.18/configure \
+ --prefix=/home/mips-linux \
+ --with-sysroot=/home/mips-linux/sysroot \
+ --target=mips-linux \
+ --disable-nls \
+ --disable-multilib \
+ --disable-werror \
+ --with-float=soft
+ make configure-host
+ make LDFLAGS="-all-static" MAKEINFO=/usr/bin/makeinfo
+ make install
+
+ export PATH=$PATH:/home/mips-linux/bin
+
+
+4. Build gcc
+
+ (In your working directory)
+
+ mkdir gcc-3.4.4-init
+ cd gcc-3.4.4-init
+
+ ../gcc-3.4.4/configure \
+ --prefix=/home/mips-linux \
+ --target=mips-linux \
+ --enable-languages=c \
+ --enable-target-optspace \
+ --disable-threads \
+ --disable-__cxa_atexit \
+ --disable-shared \
+ --disable-nls \
+ --disable-multilib \
+ --with-gnu-ld \
+ --with-float=soft
+ make LDFLAGS="-static" all-gcc
+ make install-gcc
+
+
+5. Build glibc
+
+ (Home Base is based on Linux 2.6.25. We use its header files.)
+
+ cd /path/to/linux-2.6.25
+ make include/linux/version.h
+
+ mkdir -p /home/mips-linux/sysroot/usr/include
+ cd /home/mips-linux/sysroot/usr/include
+ cp -R /path/to/linux-2.6.25/include/linux .
+ cp -R /path/to/linux-2.6.25/include/asm-generic .
+ cp -R /path/to/linux-2.6.25/include/asm-mips asm
+
+ (In your working directory)
+
+ mkdir glibc-2.3.6-build
+ cd glibc-2.3.6-build
+
+ ../glibc-2.3.6/configure \
+ --prefix=/usr \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --target=mips-linux \
+ --without-__thread \
+ --enable-add-ons=linuxthreads \
+ --with-headers=/home/mips-linux/sysroot/usr/include
+ make
+ make prefix="" install_root=/home/mips-linux/sysroot/usr install
+
+ -- Edit .so files to change the definition of GROUP as follows --
+ vi /home/mips-linux/sysroot/usr/lib/libc.so
+ GROUP ( libc.so.6 libc_nonshared.a )
+
+ vi /home/mips-linux/sysroot/usr/lib/libpthread.so
+ GROUP ( libpthread.so.0 libpthread_nonshared.a )
+ -----------------------------------------------------------------
+
+ cd /home/mips-linux/sysroot/usr/lib
+ /path/to/(your working directory)/mvglibc.sh
+
+
+6. Build gcc again
+
+ (In your working directory)
+
+ mkdir gcc-3.4.4-final
+ cd gcc-3.4.4-final
+
+ ../gcc-3.4.4/configure \
+ --prefix=/home/mips-linux \
+ --target=mips-linux \
+ --enable-languages=c,c++ \
+ --enable-shared \
+ --disable-__cxa_atexit \
+ --enable-target-optspace \
+ --with-gnu-ld \
+ --disable-nls \
+ --enable-threads \
+ --disable-multilib \
+ --with-float=soft \
+ --enable-sjlj-exceptions \
+ --with-sysroot=/home/mips-linux/sysroot
+ make LDFLAGS="-static"
+ make install
+
+
+7. Build libraries
+
+=== expat installation ===
+
+ (In your working directory)
+
+ cd libs/expat-2.0.1
+ ./configure \
+ --prefix=/home/mips-linux/sysroot/usr \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --enable-static \
+ --disable-shared
+ make
+ make install
+
+
+=== libdaemon installation ===
+
+ (In your working directory)
+
+ cd libs/libdaemon-0.12
+ ./configure \
+ --prefix=/home/mips-linux/sysroot/usr \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --enable-static \
+ --disable-shared \
+ --disable-lynx
+ make
+ make install
+
+
+=== ncurses installation ===
+
+ (In your working directory)
+
+ cd libs/ncurses-5.6
+ ./configure \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --prefix=/home/mips-linux/sysroot/usr
+ make
+ make install
+
+
+=== readline installation ===
+
+ (In your working directory)
+
+ cd libs/readline-5.2
+ ./configure \
+ --prefix=/home/mips-linux/sysroot/usr \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --disable-shared \
+ --enable-static
+ make
+
+ make documentation
+ (tex is required to make documentation)
+
+ make install
+
+
+=== popt installation ===
+
+ (In your working directory)
+
+ cd libs/popt-1.6
+ ./configure \
+ --prefix=/home/mips-linux/sysroot/usr \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --target=mips-linux \
+ --disable-shared \
+ --enable-static
+ make
+ make install
+
+
+=== ffmpeg installation ===
+
+ (In your working directory)
+
+ cd libs/ffmpeg
+ ./configure \
+ --prefix=/home/mips-linux/sysroot/usr \
+ --enable-cross-compile \
+ --arch=mips \
+ --disable-mmx \
+ --disable-mmx2 \
+ --disable-ssse3 \
+ --disable-armvfp \
+ --disable-iwmmxt \
+ --disable-altivec \
+ --disable-ffmpeg \
+ --disable-ffserver \
+ --disable-ffplay \
+ --disable-armv5te \
+ --disable-armv6 \
+ --cross-prefix=mips-linux- \
+ --disable-shared
+ make
+ make install
+
+
+=== libdlna installation ===
+
+ (In your working directory)
+
+ cd libs/libdlna-0.2.3
+ ./configure \
+ --prefix=/home/mips-linux/sysroot/usr \
+ --enable-static \
+ --disable-shared \
+ --with-ffmpeg-dir=/home/mips-linux/sysroot/usr \
+ --cross-compile \
+ --cross-prefix=mips-linux-
+ make
+ make install
+
+
+=== libupnp installation ===
+
+ (In your working directory)
+
+ cd libs/libupnp-1.4.6
+ ./configure \
+ --prefix=/home/mips-linux/sysroot/usr \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --disable-shared \
+ --enable-static \
+ --enable-tools \
+ --disable-samples \
+ --enable-wabserver \
+ --enable-client \
+ --enable-device
+ make
+ make install
+
+
+=== openssl installation ===
+
+ (In your working directory)
+
+ cd libs/openssl-0.9.8g
+ ./Configure --prefix=/home/mips-linux/sysroot/usr/ no-asm shared linux-elf
+
+ vi Makefile
+ (Replace -DL_ENDIAN, which is specified in CFLAG, with -DB_ENDIAN)
+
+ make CC=mips-linux-gcc AR="mips-linux-ar r" \
+ RANLIB=mips-linux-ranlib MAKEDEPPROG=mips-linux-gcc
+ make install
+
+
+=== ruby installation ===
+
+ (Install self-compiled ruby on your environment in advance)
+ (It is required to cross compile ruby)
+
+ (In your working directory)
+
+ cd libs/ruby-1.8.7-p72
+ ./configure \
+ --prefix=/usr \
+ --build=i686-pc-linux-gnu \
+ --host=mips-linux \
+ --enable-shared \
+ ac_cv_func_setpgrp_void=yes
+ make libdir=/home/mips-linux/sysroot/usr/lib
+ make DESTDIR=/home/mips-linux/sysroot install
+
+
+7. Remove unneeded symbols from files
+
+ strip /home/mips-linux/bin/*
+ strip /home/mips-linux/mips-linux/bin/*
+ mips-linux-strip /home/mips-linux/sysroot/usr/bin/*
+ mips-linux-strip /home/mips-linux/sysroot/usr/sbin/*
+
+ mips-linux-strip --strip-debug /home/mips-linux/mips-linux/lib/*.so
+ mips-linux-strip --strip-debug /home/mips-linux/sysroot/lib/*.so
+
+
+8. Delete documents
+
+ rm -rf /home/mips-linux/info
+ rm -rf /home/mips-linux/man
+ rm -rf /home/mips-linux/sysroot/usr/info
+ rm -rf /home/mips-linux/sysroot/usr/man

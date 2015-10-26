@@ -1,0 +1,4 @@
+::sysinit:/etc/rc.d/rc.S
+::restart:/etc/rc.d/rc.6
+::shutdown:/etc/rc.d/rc.0
+::shutdown:/bin/umount -r /

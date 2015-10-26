@@ -1,0 +1,38 @@
+#!/bin/sh
+
+SMBD=/usr/sbin/smbd
+NMBD=/usr/sbin/nmbd
+
+samba_start() {
+  if [ -x ${SMBD} -a -x ${NMBD} -a -r /etc/samba/smb.conf ]; then
+    if [ ! -d /var/lock/samba ]; then
+      mkdir /var/lock/samba
+    fi
+    echo "Starting Samba:                         ${SMBD} -D"
+    ${SMBD} -D 2>/dev/null
+    echo "                                        ${NMBD} -D"
+    ${NMBD} -D 2>/dev/null
+  fi
+}
+
+samba_stop() {
+  killall smbd nmbd 2>/dev/null
+}
+
+samba_restart() {
+  samba_stop
+  sleep 2
+  samba_start
+}
+
+case "$1" in
+'start')
+  samba_start
+  ;;
+'stop')
+  samba_stop
+  ;;
+'restart')
+  samba_restart
+  ;;
+esac

@@ -1,0 +1,72 @@
+#
+# (C) Copyright 2007 Atheros Communications, Inc.
+# All rights reserved.
+#
+
+# default to Linux
+ifeq ($(OS),)
+OS := linux
+endif
+
+include $(obj)/$(DEPTH)/common/Makefile.inc
+
+#
+# TARGET defines the target platform ISA per GNU rules.
+# It must match one of the target platforms supported by
+# the HAL.  To set the set of target platforms look at
+# hal/linux/*.inc.  You can set this in the environment
+# to override the default setting.
+#
+ifeq ($(TARGET),)
+TARGET := i386-elf
+endif
+
+ifeq ($(TARGET), mips-linux)
+TARGET := mipsisa32-be-elf
+endif
+
+# BUS defines the bus type to which the wireless devices is attached.
+# Currently, the valid BUS types are PCI and AHB.  If BUS is not
+# defined, then, we assume the bus type is PCI
+
+ifndef BUS
+BUS := PCI
+endif
+
+ifeq ($(strip ${BUS}),AHB)
+COPTS += -DATH_AHB
+else
+COPTS += -DATH_PCI
+endif
+
+#
+# Disable the !#@$!@# packet log
+#
+
+#COPTS += -DREMOVE_PKT_LOG
+
+#
+# Check to see if NO_SIMPLE_CONFIG is defined
+#
+
+ifeq ($(strip ${NO_SIMPLE_CONFIG}),1)
+	COPTS += -DNO_SIMPLE_CONFIG
+endif
+
+# Include path
+INCS = -include $(COMMON)/../include/compat.h -I$(COMMON)/../include -I$(COMMON)/../include/$(OS) \
+	-I$(COMMON)/../$(OS)
+
+ifeq ($(AP71_DEBUG),1)
+COPTS += -Werror
+else
+COPTS += -Werror -O2 
+endif
+
+COPTS += -Wno-undef 
+# ====================================
+# COPTS += -g
+# ====================================
+
+include $(HAL)/$(OS)/public/$(TARGET).inc
+include $(obj)/$(DEPTH)/linux/BuildCaps.inc

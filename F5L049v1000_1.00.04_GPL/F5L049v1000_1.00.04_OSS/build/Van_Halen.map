@@ -1,0 +1,159 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+user_stack          0x4000            ../boot/misc.o
+
+Discarded input sections
+
+ .reginfo       0x0000000000000000        0x0 ../boot/start.o
+ .reginfo       0x0000000000000000        0x0 ../boot/head.o
+ .reginfo       0x0000000000000000        0x0 ../boot/misc.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom_kern         0x00000000bf120000 0x0000000000180000
+rom_rootfs       0x00000000bf2a0000 0x0000000000d50000
+ram_init         0x0000000080002000 0x0000000000010000
+ram              0x0000000081000000 0x0000000004000000
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x00000000bf120000                _start_rom_addr = 0xbf120000
+                0x0000000081000000                _start_ram_addr = 0x81000000
+
+.boot           0x00000000bf120000      0x440
+ ../boot/boot.o(.text)
+ .text          0x00000000bf120000      0x440 ../boot/boot.o
+                0x00000000bf120000                startup_comp
+                0x00000000bf120420                MachineType_Boot
+                0x00000000bf120400                ROM_CheckSum_Boot
+                0x00000000bf120410                SeriesName_Boot
+                0x00000000bf120430                Version_Boot
+                0x00000000bf120440                . = ALIGN (0x10)
+                0x0000000080002000                _start_init_ram_addr = 0x80002000
+                0x00000000bf120440                _init_start = .
+
+.init           0x0000000080002000       0xa0 load address 0x00000000bf120440
+ *(.init)
+ .init          0x0000000080002000       0xa0 ../boot/start.o
+                0x0000000080002000                copy_kernel_block
+                0x00000000800020a0                . = ALIGN (0x10)
+                0x00000000bf1204e0                _init_end = ((ADDR (.boot) + SIZEOF (.boot)) + SIZEOF (.init))
+                0x00000000bf1204e0                _shift_addr = _init_end
+                0x00000000bf1204e0                _kernel_begin = _init_end
+
+.text           0x0000000081000000     0x2a58 load address 0x00000000bf1204e0
+ *(.text)
+ .text          0x0000000081000000        0x0 ../boot/start.o
+ .text          0x0000000081000000       0xc0 ../boot/head.o
+                0x0000000081000000                head_comp
+ .text          0x00000000810000c0     0x25e0 ../boot/misc.o
+                0x00000000810018f4                gunzip
+                0x00000000810000e4                memcpy
+                0x00000000810025c0                decompress_kernel
+                0x0000000081002564                memcmp
+                0x00000000810000c0                memset
+                0x000000008100247c                print_hex
+ *(.rodata)
+ .rodata        0x00000000810026a0      0x1c0 ../boot/misc.o
+ *(.rodata.str1.4)
+ .rodata.str1.4
+                0x0000000081002860      0x1f4 ../boot/misc.o
+ *(.rodata.cst4)
+ .rodata.cst4   0x0000000081002a54        0x4 ../boot/misc.o
+                0x0000000081002a58                _etext = .
+
+.MIPS.options
+ *(.MIPS.options)
+
+.reginfo        0x0000000081002a58       0x18 load address 0x00000000bf122f38
+ *(.reginfo)
+ .reginfo       0x0000000081002a58       0x18 ../boot/boot.o
+
+.rel.dyn        0x0000000081002a58        0x0
+ .rel.dyn       0x0000000000000000        0x0 ../boot/misc.o
+
+.data           0x0000000081002a70   0x10cc30 load address 0x00000000bf122f50
+ *(.data)
+ .data          0x0000000081002a70        0x0 ../boot/boot.o
+ .data          0x0000000081002a70        0x0 ../boot/start.o
+ .data          0x0000000081002a70        0x0 ../boot/head.o
+ .data          0x0000000081002a70       0x10 ../boot/misc.o
+                0x0000000081002a70                stack_start
+                0x0000000081002a74                free_mem_end_ptr
+                0x0000000081002a78                free_mem_ptr
+ .data          0x0000000081002a80   0x10cc1a vmlinux.o
+                0x0000000081002a84                _binary_vmlinux_bin_gz_start
+                0x000000008110f69a                _binary_vmlinux_bin_gz_end
+                0x000000008110f69a                input_data_end
+                0x0000000081002a84                input_data
+                0x0000000081002a80                input_len
+                0x000000008110f6a0                . = ALIGN (0x10)
+ *fill*         0x000000008110f69a        0x6 00
+                0x000000008110f6a0                _edata = .
+
+.sbss
+ *(.sbss)
+ *(.scommon)
+
+.bss            0x000000008110f6a0     0xc430 load address 0x00000000bf22fb80
+ *(.dynbss)
+ *(.bss)
+ .bss           0x000000008110f6a0        0x0 ../boot/boot.o
+ .bss           0x000000008110f6a0        0x0 ../boot/start.o
+ .bss           0x000000008110f6a0        0x0 ../boot/head.o
+ .bss           0x000000008110f6a0     0x8430 ../boot/misc.o
+ *(COMMON)
+ COMMON         0x0000000081117ad0     0x4000 ../boot/misc.o
+                0x0000000081117ad0                user_stack
+                0x000000008111bad0                . = ALIGN (0x10)
+                0x000000008111bad0                _end = .
+                0x000000008111bad0                PROVIDE (end, .)
+                0x00000000bf23bfb0                _kernel_end = ((_end - _start_ram_addr) + _shift_addr)
+
+.rootfs         0x00000000bf2a0000   0x698000
+ rootfs.o(.rootfs)
+ .rootfs        0x00000000bf2a0000   0x698000 rootfs.o
+                0x00000000bf2a0000                _binary_rootfs_start
+                0x00000000bf938000                _binary_rootfs_end
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000       0x12
+ *(.comment)
+ .comment       0x0000000000000000       0x12 ../boot/misc.o
+LOAD ../boot/boot.o
+LOAD ../boot/start.o
+LOAD ../boot/head.o
+LOAD ../boot/misc.o
+LOAD vmlinux.o
+LOAD rootfs.o
+OUTPUT(linuximage elf32-tradbigmips)
+
+.pdr            0x0000000000000000      0x2a0
+ .pdr           0x0000000000000000       0x20 ../boot/boot.o
+ .pdr           0x0000000000000020       0x20 ../boot/start.o
+ .pdr           0x0000000000000040       0x20 ../boot/head.o
+ .pdr           0x0000000000000060      0x240 ../boot/misc.o
+
+.mdebug.abi32   0x0000000000000000        0x0
+ .mdebug.abi32  0x0000000000000000        0x0 ../boot/misc.o

@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+/* BODY definition -------------------------------------------------*/
+
+body.foot {
+	margin-top:0px;
+	margin-right:17px;
+	margin-bottom:10px;
+}
+
+/* table definition ------------------------------------------------*/
+table {
+  font-family: "MS UI Gothic",sans-serif;
+  color:#181E5C;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+table.foot_hi {
+	border-right:solid 1px #181E5C;
+}
+
+table.foot_low {
+	border-right:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+	height:19px;
+}
+
+td.foot_bottom {
+	/* futta : under frame */
+	width:5px;
+	border-width:0px 0px 0px 0px;
+}
+
+td.foot_wleft {
+	/* futta : Left space */
+	width:5px;
+}
+
+td.foot_bluebar {
+	/* futta : blue belt */
+	height:54px;
+	color:white;
+	padding-left:20px;
+	background-color:#181E5C;
+	border-right:solid 1px #181E5C;
+}
+
+td.copyright {
+	/* futta : Copyright */
+	text-align:right;
+	border-left:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+}

@@ -1,0 +1,10 @@
+#!/bin/sh
+# Name: wps_pbc
+#    WPS supplicant with PBC mode is easily ecexuted.
+# 
+# Refer to usage of WPA supplicant for the meaning of each option. 
+. /usr/sbin/wps_subs
+
+echo "...Start new WPA supplicant with WPS PBC !"
+do_wpa_supplicant "pbc"
+

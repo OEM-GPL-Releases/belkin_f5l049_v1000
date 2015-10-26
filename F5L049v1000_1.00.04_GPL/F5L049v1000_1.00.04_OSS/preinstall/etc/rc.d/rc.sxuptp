@@ -1,0 +1,58 @@
+#!/bin/sh
+
+LIBPATH=/lib/modules
+PRODUCT=`sxromconf -c GET_MACHINE`
+FW_VERSION=`sxromconf -c GET_VERSION`
+
+PROCDIR=/proc/sxuptp
+CFG_KEY=DS_MODE
+
+sxuptp_start() {
+	echo "Starting sxuptpd"
+	insmod sxuptp.ko
+	insmod sxuptp_usbmode.ko
+
+	echo "Initializing USB port mode:"
+	for n in 1 2 3 4 ; do
+		PROCFILE=${PROCDIR}/usbmode_port${n}
+
+		sxsysconf ${CFG_KEY}${n} > ${PROCFILE}
+
+		echo -n " port${n} = "
+		cat ${PROCFILE}
+	done
+
+	insmod sxuptp_driver.ko
+
+	echo "Starting usbjcpd"
+	insmod jcp.ko
+	insmod jcp_cmd.ko product="${PRODUCT}" fw_version="${FW_VERSION}"
+}
+
+sxuptp_stop() {
+	rmmod jcp_cmd
+	rmmod jcp
+	rmmod sxuptp_driver
+	rmmod sxuptp_usbmode
+	rmmod sxuptp
+}
+
+sxuptp_restart() {
+	sxuptp_stop
+	sxuptp_start
+}
+
+# Main #
+cd "${LIBPATH}"
+
+case "$1" in
+'start')
+	sxuptp_start ;;
+'stop')
+	sxuptp_stop ;;
+'restart')
+	sxuptp_restart ;;
+*)
+	echo "usage $0 start|stop|restart"
+esac
+

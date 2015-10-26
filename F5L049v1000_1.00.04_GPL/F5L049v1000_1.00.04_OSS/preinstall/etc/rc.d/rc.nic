@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Select NIC interface
+
+LINK_STATUS=/proc/silex/ag7100/link_status
+WAIT_COUNT=5
+
+IS_LINK=0
+while [ ${IS_LINK} -ne 1 -a ${WAIT_COUNT} -gt 0 ]; do
+	IS_LINK=`cat ${LINK_STATUS}`
+	WAIT_COUNT=`expr ${WAIT_COUNT} - 1`
+
+	if [ ${IS_LINK} -ne 1 ]; then
+		echo "Wait ethernet link..."
+		sleep 1
+	fi
+done
+
+if [ ${IS_LINK} -ne 1 ]; then
+	echo "Wireless start"
+	/etc/rc.d/rc.atheros eth0 start
+else
+	echo "Wired start"
+	insmod /lib/modules/ag7100_mod.ko
+	/etc/rc.d/rc.atheros ath0 start_after_down
+fi
+

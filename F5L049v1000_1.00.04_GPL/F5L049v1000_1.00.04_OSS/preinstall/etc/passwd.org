@@ -1,0 +1,7 @@
+root::0:0::/:/bin/sh
+bin:x:1:1:bin:/bin:
+ftp:x:14:100::/mnt/shared:/bin/false
+avahi:x:70:70:Avahi daemon:/:/bin/false
+avahi-autoipd:x:71:71:Avahi autoipd:/:/bin/false
+nobody:x:99:99:nobody:/:/bin/false
+administrator:x:10000:100:Administrator:/mnt/shared:/bin/bash

@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<j mmtype>
+<link rel="stylesheet" href="/css/main.css" type="text/css">
+<link rel="stylesheet" href="/css/head.css" type="text/css">
+<link rel="stylesheet" href="/css/foot.css" type="text/css">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<script type="text/javascript" src="/<j dir_path>/main.js"></script>
+<title>contents</title>
+<script type="text/javascript">
+<!--
+var locpath = location.pathname;
+var argument = locpath.split("/");
+var filename = argument[argument.length-1];
+var argument = filename.split("_");
+var menuid = argument[0];
+var currentpage = filename.substring(0, filename.lastIndexOf("_")) + "_main.htm";
+var submenu = get_subid(menuid, filename);
+
+function chgHeight()
+{
+	regulate = 0;
+	if (document.all) regulate += 13;
+	menu_b = top.menu.document.getElementById('menu_bottom');
+	main_b = document.getElementById('main_bottom');
+	obj = document.getElementById('inframe');
+	if (getBrowserName() != "Safari") {
+		obj.style.height = obj.offsetHeight;
+	}
+	obj.style.height = "100%";
+	if (getBrowserName() == "Safari") {
+		obj.style.height = obj.offsetHeight;
+	}
+	if (Math.abs(menu_b.offsetTop - main_b.offsetTop) > 20)
+	{
+		hei = menu_b.offsetTop - (main_b.offsetTop - obj.offsetHeight) + regulate;
+		obj.style.height = hei;
+	}
+}
+//-->
+</script>
+</head>
+<body class="main" onLoad="setTimeout('chgHeight()',10);" onresize="setTimeout('chgHeight()',10);">
+
+<noscript>
+<j mlword:MSGID_NOSCRIPT>
+</noscript>
+
+<!-- Header -->
+<table class="maintbl" cellpadding=0 cellspacing=0 border=0>
+<tr class="header">
+	<td class="headtop"><!-- --></td>
+	<td colspan="7" class="topinline"><!-- --></td>
+</tr>
+<script type="text/javascript">
+<!--
+if(menuid != "syslog")
+{
+	with(document){
+	<!-- Title -->
+		write('<tr class="title">');
+		write('<td class="titleleft">&nbsp;</td>');
+		write('<td colspan="7" class="title">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/images/point.gif" alt="">');
+		write('<span class="maintitle">');
+		get_title(menuid);
+		write('</span></td>');
+		write('</tr>');
+	<!-- Contents -->
+		write('<tr class="tab">');
+		write('<td>&nbsp;</td>');
+		write('<td class="border_l">');
+		create_mainbar(menuid , submenu);
+		if(menuid != top.hide.menuid) {
+			top.hide.clean();
+		}
+		write('</td>');
+		write('</tr>');
+	}
+}
+//-->
+</script>
+
+<!-- Main -->
+<tr class="main">
+	<td class="w5h5">&nbsp;</td>
+	<td colspan="7" class="maintop">
+	<div id="inframe" style="width:100%;height:100%;">
+<script type="text/javascript">
+<!--
+		document.write('<iframe src="./'+currentpage+'" name="main" style="width:100%;height:98%;" frameborder=0><j mlword:MSGID_NOFRAMES><\/iframe>');
+//-->
+</script>
+	</div>
+	</td>
+</tr>
+
+<!-- Footer -->
+<script type="text/javascript">
+<!--
+if(menuid != "syslog")
+{
+	with(document){
+		write('<tr class="foot_hi">');
+			write('<td class="foot_wleft" style="border-right:solid 1px #181E5C;">&nbsp;</td>');
+			write('<td colspan="7" class="foot_bluebar"><span id="tips"></span></td>');
+		write('</tr>');
+	}
+}
+//-->
+</script>
+<tr class="foot_low">
+	<td class="foot_wleft" style="border-bottom:solid 1px #181E5C;">&nbsp;</td>
+	<td colspan="7" class="copyright"><j cpyrgt>&nbsp;</td>
+</tr>
+</table>
+<div id="main_bottom"></div>
+</body>
+</html>

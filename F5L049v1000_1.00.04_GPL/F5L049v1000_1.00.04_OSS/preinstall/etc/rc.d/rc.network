@@ -1,0 +1,243 @@
+#!/bin/sh
+
+DEF_WAITTIME=12
+
+dhcp_stop() {
+  local IFNAME=$1
+
+  echo "kill dhcpcd ${IFNAME}"
+
+  if [ -n ${IFNAME} ] ; then
+    local commad=
+    local isdhcpcd=
+    local isifeq=
+    local proc=`ls "/proc"`
+    for I in $proc
+    do
+      if [ ! -f /proc/$I/cmdline ]; then
+        continue
+      fi
+      commad=`cat "/proc/$I/cmdline"`
+      if [ -z "$commad" ]; then
+        continue
+      fi
+      isdhcpcd=`echo "$commad" | grep dhcpcd`
+      if [ -z $isdhcpcd ]; then
+         continue
+      fi
+      isifeq=`echo "$commad" | grep $IFNAME`
+      if [ -z $isifeq ]; then
+        continue
+      fi
+      #echo "kill $I ($commad)"
+      kill $I 2>/dev/null
+    done
+    rm -f /etc/dhcpcd/dhcpcd-${IFNAME}.pid 2>/dev/null
+  else
+    killall dhcpcd 2>/dev/null
+    rm -f /etc/dhcpcd/dhcpcd-* 2>/dev/null
+  fi
+  sleep 1
+}
+
+link_local() {
+  local IFNAME=$1
+
+  # Link Local address Management daemon start!!
+  if [ ! -x /usr/sbin/avahi-autoipd ]; then
+    return 1
+  fi
+  /usr/sbin/avahi-autoipd -k ${IFNAME} 2>/dev/null
+
+  sleep 1
+
+  echo "/usr/sbin/avahi-autoipd -D ${IFNAME}"
+  /usr/sbin/avahi-autoipd -D  ${IFNAME}
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+  TMP=8
+  while [ $TMP -gt 0 ];
+  do
+    if /sbin/ifconfig ${IFNAME} | grep "inet addr" 1> /dev/null ; then
+      return 0
+    fi
+    sleep 1
+    TMP=`expr $TMP - 1`
+  done
+  return 1
+}
+
+dhcp_start() {
+  local IFNAME=$1
+  local WAITTIME=$2
+
+  # use DHCP to bring interface up
+  USE_DHCP0=`sxsysconf USE_DHCP0`
+  HOST_NAME=`hostname`
+  if [ "${USE_DHCP0}" = "ENABLE" ]; then
+    if [ -x /sbin/dhcpcd ]; then
+      echo "/sbin/dhcpcd -d -o -h ${HOST_NAME} -t ${WAITTIME} ${IFNAME}" 
+      /sbin/dhcpcd -d -o -h "${HOST_NAME}" -t ${WAITTIME} ${IFNAME}
+      if [ -f "/etc/dhcpc/dhcpcd-${IFNAME}.pid" ]; then
+        return 0
+      fi
+    else
+      echo "No dhcpcd daemon !!"
+    fi
+
+    link_local ${IFNAME}
+
+    dhcp_stop ${IFNAME}
+    /sbin/dhcpcd -d -o -t 0 ${IFNAME} &
+  else
+    # bring up interface using a static IP address
+    IPADDR0=`sxsysconf IPADDR0`
+    if [ ! "${IPADDR0}" = "0.0.0.0" ] ; then
+      IFCFG_OPTION=""
+      NETMASK0=`sxsysconf NETMASK0`
+      if [ ! "${NETMASK0}" = "0.0.0.0" ] ; then
+        IFCFG_OPTION="netmask ${NETMASK0}"
+      fi
+      echo "/sbin/ifconfig ${IFNAME} ${IPADDR0} ${IFCFG_OPTION}"
+      /sbin/ifconfig ${IFNAME} ${IPADDR0} ${IFCFG_OPTION}
+    else
+      link_local ${IFNAME}
+    fi
+  fi
+}
+
+lo_up() {                                     
+  if grep lo: /proc/net/dev 1> /dev/null ; then   
+    if ! /sbin/ifconfig | grep "^lo" 1> /dev/null ; then
+      echo "/sbin/ifconfig lo 127.0.0.1"
+      /sbin/ifconfig lo 127.0.0.1                 
+      echo "/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 lo"
+      /sbin/route add -net 127.0.0.0 netmask 255.0.0.0 lo
+    fi
+  fi
+}
+
+lo_down() {                                   
+  if grep lo: /proc/net/dev 1> /dev/null ; then                
+    echo "/sbin/ifconfig lo down"
+    /sbin/ifconfig lo down
+  fi
+}
+
+if_eth0_up() {
+  local IFNAME=eth0
+
+  # I/F exists ?
+  if grep `echo ${1}: | cut -f 1 -d :`: /proc/net/dev 1> /dev/null ; then
+    # I/F up ?
+    if ! /sbin/ifconfig | grep ${IFNAME} 1>/dev/null || \
+       ! /sbin/ifconfig ${IFNAME} | grep "inet addr" 1> /dev/null ; then
+
+      # link local management
+      link_local ${IFNAME}
+
+      # Set MTU to something else than 1500
+      if [ ! "x${MTU0}" = "x" ]; then
+        echo "/sbin/ifconfig ${IFNAME} mtu ${MTU0}"
+        /sbin/ifconfig ${IFNAME} mtu ${MTU0}
+      fi
+      # dhcp start
+      dhcp_start ${IFNAME} ${DEF_WAITTIME}
+    fi
+  else
+    echo "Error: No I/F ${IFNAME}"
+  fi
+}
+
+# Function to take down a network interface:
+if_eth0_down() {
+  local IFNAME=eth0
+
+  if grep `echo ${IFNAME}: | cut -f 1 -d :`: /proc/net/dev 1> /dev/null ; then
+    dhcp_stop ${IFNAME}
+
+    echo "/sbin/ifconfig ${IFNAME} down"
+    /sbin/ifconfig ${IFNAME} down
+  fi
+}
+
+# Function to bring up the gateway if there is not yet a default route:
+gateway_up() {
+  if ! /sbin/route -n | grep "^0.0.0.0" 1> /dev/null ; then
+    GATEWAY=`sxsysconf GATEWAY`
+    if [ ! "${GATEWAY}" = "0.0.0.0" ]; then
+      echo "/sbin/route add default gw ${GATEWAY} metric 1"
+      /sbin/route add default gw ${GATEWAY} metric 1 2>&1
+    fi
+  fi
+}
+
+# Function to take down an existing default gateway:
+gateway_down() {
+  if /sbin/route -n | grep "^0.0.0.0" 1> /dev/null ; then
+    echo "/sbin/route del default"
+    /sbin/route del default
+  fi
+}
+
+dnsserv_regist() {
+  RESOLV_CONF=/etc/resolv.conf
+
+  DNS_PRIMARY=`sxsysconf DNS_PRIMARY`
+  if [ ${DNS_PRIMARY} != "0.0.0.0" ]; then
+    FIND_DNS=`grep "nameserver ${DNS_PRIMARY}" ${RESOLV_CONF} 2>/dev/null`
+    if [ "${FIND_DNS}" = "" ]; then
+      echo "Regist nameserver ${DNS_PRIMARY}"
+      echo "nameserver ${DNS_PRIMARY}" >> ${RESOLV_CONF}
+    fi
+  fi
+
+  DNS_SECONDARY=`sxsysconf DNS_SECONDARY`
+  if [ ${DNS_SECONDARY} != "0.0.0.0" ]; then
+    FIND_DNS=`grep "nameserver ${DNS_SECONDARY}" ${RESOLV_CONF} 2>/dev/null`
+    if [ "${FIND_DNS}" = "" ]; then
+      echo "Regist nameserver ${DNS_SECONDARY}"
+      echo "nameserver ${DNS_SECONDARY}" >> ${RESOLV_CONF}
+    fi
+  fi
+}
+
+# Function to start the network:
+start() {
+  lo_up
+  if_eth0_up
+  gateway_up
+  dnsserv_regist
+}
+
+# Function to stop the network:
+stop() {
+  gateway_down
+  if_eth0_down
+  lo_down
+}
+
+# main() routine
+case "$1" in
+'start')
+  start
+  ;;
+'stop')
+  stop
+  ;;
+'restart')
+  if [ -z $2 ]; then
+    echo "usage $0 restart {interface} [time(sec)]"
+    exit 1
+  fi
+  INTERFACE=$2
+  WAITTIME=$3
+  dhcp_stop $INTERFACE
+  dhcp_start $INTERFACE $WAITTIME
+  ;;
+
+*)
+  echo "usage $0 start|stop|restart {if} {time}"
+  ;;
+esac

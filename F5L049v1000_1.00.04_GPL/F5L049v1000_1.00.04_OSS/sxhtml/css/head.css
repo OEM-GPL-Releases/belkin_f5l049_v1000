@@ -1,0 +1,170 @@
+@charset "UTF-8";
+
+/* Anchor definition -----------------------------------------------*/
+.dactv a:link {   /* When the link doesn't visit */
+	color:white;
+}
+.dactv a:visited {   /* visited */
+	color:white;
+}
+.dactv a:active {
+	color:white;
+}
+.dactv a:hover {   /* on mouse */
+	color:white;
+	background-color:blue;
+}
+
+/* BODY definition -------------------------------------------------*/
+body.head {
+	margin-top:10px;
+	margin-right:17px;
+	margin-bottom:0px;
+	margin-left:0px;
+}
+
+/* Image definition ------------------------------------------------*/
+img {
+	border:0px solid white;
+	vertical-align:middle;
+}
+
+/* Table definition ------------------------------------------------*/
+table {
+	font-family: "MS UI Gothic",sans-serif;
+	color:#181E5C;
+	border-collapse:collapse;
+	font-size:13px;
+}
+
+table.actv {
+	/* Title place of Active Page */
+	border-style:solid solid none solid;
+	border-width:1px 1px 0px 1px;
+	border-color:#181E5C;
+	margin:4px 0px 6px 0px;
+}
+
+table.dactv {
+	/* Title place of Non Active Page */
+	border-style:none none solid none;
+	border-width:0px 0px 1px 0px;
+	border-color:#181E5C;
+}
+
+table.dactvr {
+	/* Title place of Non Active Page with right side line */
+	border-style:none solid solid none;
+	border-width:0px 1px 1px 0px;
+	border-color:#181E5C;
+}
+
+/* TD defienition -------------------------------------------------*/
+td.headtop {
+	border-top:solid 10px #181E5C;
+	padding-left:3px;
+	height:14px;
+}
+
+td.topinline {
+	/* Upper right of header */
+	padding-left:3px;
+	border-top:solid 10px #181E5C;
+	border-right:solid 1px #181E5C;
+	border-bottom:solid 1px #181E5C;
+}
+
+td.inline {
+	/* header : Underline of blue belt */
+	padding-left:3px;
+	border-left:solid 1px #181E5C;
+	border-top:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+}
+
+td.titleleft {
+	height:73px;
+}
+
+td.title {
+	/* header : title, all image region */
+	font-size:17px;
+	vertical-align:middle;
+	border-left:solid 1px #181E5C;
+	border-right:solid 1px #181E5C;
+	background-image: url(/images/head.jpg);
+	background-repeat: no-repeat;
+	background-position: right top;
+}
+
+td.border_l {
+	border-left:solid 1px #181E5C;
+}
+
+td.border_r {
+	border-right:solid 1px #181E5C;
+}
+
+/* Span definition -------------------------------------------------*/
+span.maintitle {
+	/* header : title character */
+	border-bottom:dotted 2px #181E5C;
+	font-weight:bold;
+}
+
+/* Header : Page Link -----------------------------------------------*/
+td.mainbar_left {
+	/* header : page link - left */
+	height:25px;
+	background-color:#181E5C; /* tab */
+}
+
+td.mainbar_dactvr {
+	/* header : page link - no active page - right */
+	height:25px;
+	background-color:#181E5C; /* tab */
+	border-right:solid 1px #181E5C; /* tab */
+}
+
+td.mainbar_dactv {
+	/* header : page link - no active page */
+	color:white;
+	text-align:center;
+	height:25px;
+	background-color:#181E5C;
+}
+
+td.mainbar_dactvd {/* tab */
+	/* header : page link - no active page */
+	color:white;
+	text-align:center;
+	height:25px;
+}
+
+td.mainbar_actv {
+	/* header : page link - no active page */
+	color:#181E5C;
+	text-align:center;
+	height:25px;
+	background-color:lightsteelblue;
+}
+
+td.w1h7 {
+	width:1px;
+	height:7px;
+}
+
+td.w1h6 {
+	width:1px;
+	height:6px;
+}
+
+td.w200h7 {
+	width:200px;
+	height:7px;
+}
+
+td.w200h6 {
+	width:200px;
+	height:6px;
+}

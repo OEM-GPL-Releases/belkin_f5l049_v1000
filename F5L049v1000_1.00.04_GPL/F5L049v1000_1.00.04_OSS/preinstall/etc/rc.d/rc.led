@@ -1,0 +1,34 @@
+#!/bin/sh
+
+kill_all() {
+	local APP=$1
+	local CMDLINE=
+	local TMP=
+
+	for PID in `ls /proc`
+	do
+		if [ ! -d "/proc/${PID}" ] ; then
+			continue
+		fi
+		CMDLINE=`cat "/proc/${PID}/cmdline"` 2>/dev/null 
+		TMP=`echo $CMDLINE | grep $APP`
+		if [ -z $TMP  ]; then
+			continue
+		fi
+
+		kill $PID
+	done
+}
+
+case $1 in
+"start" )
+	if [ -x /usr/sbin/security_led.sh ]; then
+		echo "security led ctrl daemon:                 /usr/sbin/security_led.sh &"
+		/usr/sbin/security_led.sh &
+	fi
+	;;
+"stop" )
+	kill_all /usr/sbin/security_led.sh
+	;;
+esac
+

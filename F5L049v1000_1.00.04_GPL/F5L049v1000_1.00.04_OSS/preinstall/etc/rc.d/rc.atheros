@@ -1,0 +1,617 @@
+#!/bin/sh
+
+USAGE="usage $0 IFNAME start|start_after_down|stop|restart|install|uninstall|setting"
+#
+PATH=/usr/sbin:/bin:/usr/bin:/sbin
+LIBPATH=/lib/modules
+PATH_WPA_SUPPLICANT_CONF=/etc/wpa_supplicant.conf
+PATH_WPA_SUPPLICANT_PID=/var/run/wpa_supplicant.pid
+PATH_WPA_SUPPLICANT_LOG=/var/log/wpa_supplicant.log
+#
+DEV_VAP=$1
+COMMAND=$2
+
+# -------------------------------------------------------------------
+WL_WEP_KEYLEN="`sxsysconf WL_WEP_KEYLEN`"
+WL_WEP_KEY0="`sxsysconf WL_WEP_KEY0`"
+WL_WEP_KEY1="`sxsysconf WL_WEP_KEY1`"
+WL_WEP_KEY2="`sxsysconf WL_WEP_KEY2`"
+WL_WEP_KEY3="`sxsysconf WL_WEP_KEY3`"
+WL_CHANNEL="`sxsysconf WL_CHANNEL`"
+WL_NETWORK_AUTH="`sxsysconf WL_NETWORK_AUTH`"
+WL_WEP_KEY_ID="`sxsysconf WL_WEP_KEY_ID`"
+WL_MODE="`sxsysconf WL_MODE`"
+WL_WPA_ENCRIPT="`sxsysconf WL_WPA_ENCRIPT`"
+WL_WEP_ENABLE="`sxsysconf WL_WEP_ENABLE`"
+WL_SSID="`sxsysconf WL_SSID`"
+WL_WPA_PSK="`sxsysconf WL_WPA_PSK`"
+WL_WPS_ENABLE="`sxsysconf WL_WPS_ENABLE`"
+WL_WPS_PIN="`sxsysconf WL_WPS_PIN`"
+#
+DEFAULT_COUNTRYCODE=840
+CONF_COUNTRY="`sxromconf -d /dev/sxart -c GET_COUNTRY`"
+
+# -------------------------------------------------------------------
+# atheros_debug
+#     set debug Level etc..
+# -------------------------------------------------------------------
+atheros_debug() {
+#
+#	iwpriv ${DEV_VAP} dbgLVL -1
+#	echo 8 > /proc/sys/kernel/printk
+	
+	echo -n ''
+}
+
+# -------------------------------------------------------------------
+# atheros_info
+# -------------------------------------------------------------------
+atheros_info() {
+	echo "atheros_${1}"
+}
+
+# -------------------------------------------------------------------
+# atheros_ifup
+# -------------------------------------------------------------------
+atheros_ifup() {
+	atheros_info "ifup ${DEV_VAP}"
+	ifconfig ${DEV_VAP} up
+}
+
+# -------------------------------------------------------------------
+# atheros_ifdown
+# -------------------------------------------------------------------
+atheros_ifdown() {
+	atheros_info "ifdown ${DEV_VAP}"
+	ifconfig ${DEV_VAP} down
+}
+
+# ===================================================================
+# atheros_install
+#     install kernel object
+#     atheros_install Country/Region Code
+# -------------------------------------------------------------------
+atheros_install() {
+
+	atheros_info "install ${DEV_VAP}, country=${CONF_COUNTRY}"
+
+	insmod "wlan.ko"
+	insmod "ath_hal.ko"
+	insmod "ath_rate_atheros.ko"
+	insmod "ath_dev.ko"
+
+	if [ "${CONF_COUNTRY}" = "" -o "${CONF_COUNTRY}" -eq 0 ]; then
+		echo " ---------------- "
+		echo "    country code not defined: ${CONF_COUNTRY}."
+		echo "    it set ${DEFAULT_COUNTRYCODE} forcibly."
+		echo " ---------------- "
+		insmod "ath_ahb.ko" "ath_cc=${DEFAULT_COUNTRYCODE}"
+	else
+		insmod "ath_ahb.ko"
+	fi
+
+	insmod "wlan_acl.ko"
+	insmod "wlan_scan_sta.ko"
+#	insmod "wlan_scan_ap.ko"
+	insmod "wlan_tkip.ko"
+	insmod "wlan_wep.ko"
+	insmod "wlan_xauth.ko"
+	insmod "wlan_ccmp.ko"
+
+}
+
+# -------------------------------------------------------------------
+# atheros_uninstall
+#     uninstall kernel object
+# -------------------------------------------------------------------
+atheros_uninstall() {
+
+	atheros_info "uninstall ${DEV_VAP}"
+
+	rmmod "wlan_ccmp.ko"
+	rmmod "wlan_xauth.ko"
+	rmmod "wlan_wep.ko"
+	rmmod "wlan_tkip.ko"
+#   rmmod "wlan_scan_ap.ko"
+	rmmod "wlan_scan_sta.ko"
+	rmmod "wlan_acl.ko"
+
+	rmmod "ath_ahb.ko"
+
+	rmmod "ath_dev.ko"
+	rmmod "ath_rate_atheros.ko"
+	rmmod "ath_hal.ko"
+	rmmod "wlan.ko"
+
+}
+
+# ===================================================================
+# atheros_set_mode
+# -------------------------------------------------------------------
+atheros_set_mode() {
+
+_wireless_mode="${1}"
+
+	atheros_info "set_mode ${DEV_VAP}, MODE=${_wireless_mode}"
+
+	iwpriv ${DEV_VAP} mode ${_wireless_mode}
+	iwpriv ${DEV_VAP} get_mode
+}
+
+# -------------------------------------------------------------------
+# atheros_set_mode_11g
+# -------------------------------------------------------------------
+atheros_set_mode_11g() {
+
+	echo -n ""
+#	atheros_set_mode "11g"
+}
+
+# ===================================================================
+# atheros_set_authmode
+#     atheros_set_authmode <AUTH_MODE>
+# -------------------------------------------------------------------
+atheros_set_authmode() {
+
+_auth_mode="${1}"
+_auth_mode_arg=0
+
+	atheros_info "set_auth_mode ${DEV_VAP}, AUTH=${_auth_mode}"
+
+	case "${_auth_mode}" in
+	'Open')       _auth_mode_arg=1;;
+	'Shared')     _auth_mode_arg=2;;
+	'8021X')      _auth_mode_arg=3;;
+	'Auto')       _auth_mode_arg=4;;
+	'WPA'|'WPA2') _auth_mode_arg=5;;
+	*)
+		echo " ---------------- "
+		echo "    Unknown authmode ${_auth_mode}"
+		echo " ---------------- "
+	esac
+
+	echo "iwpriv ${DEV_VAP} authmode ${_auth_mode_arg}"
+	iwpriv ${DEV_VAP} authmode ${_auth_mode_arg}
+	iwpriv ${DEV_VAP} get_authmode
+}
+
+# ===================================================================
+# atheros_kill_wpa
+#    same problem in driver if already exec wpa_supplicant, 
+# -------------------------------------------------------------------
+atheros_kill_wpa() {
+	kill `ps w| grep wpa_supplicant | grep -v grep | awk '{print $1}'`
+}
+
+# -------------------------------------------------------------------
+# atheros_wpa_makeconf
+#     make wpa_supplicant.conf and print out 
+# -------------------------------------------------------------------
+atheros_wpa_makeconf() {
+
+_proto="${1}"
+_pairwise="${2}"
+_keymgmt="${3}"
+_ssid="${4}"
+_psk="${5}"
+_group="${6}"
+
+	case "${WL_MODE}" in
+	'Infrastructure') _mode=0 ;;
+	'Ad Hoc') _mode=1 ;;
+	esac
+
+	# write wpa_supplicant.conf
+	cat >${PATH_WPA_SUPPLICANT_CONF}<<__EOF__
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=root
+
+network={
+  mode=${_mode}
+  scan_ssid=1
+  ssid="${_ssid}"
+  proto=${_proto}
+  key_mgmt=${_keymgmt}
+  pairwise=${_pairwise}
+  group=${_group}
+__EOF__
+
+	if [ ${#_psk} -ge 8 ] && [ ${#_psk} -le 63 ]; then
+		atheros_info "wpa_makeconf : ${DEV_VAP}, MODE=${WL_MODE}, PSK(ascii)=\"${_psk}\" (${#_psk})"
+		cat >>${PATH_WPA_SUPPLICANT_CONF}<<__EOF__
+  psk="${_psk}"
+}
+__EOF__
+	elif [ ${#_psk} -eq 64 ]; then
+		atheros_info "wpa_makeconf : ${DEV_VAP}, MODE=${WL_MODE}, PSK(hex)=${_psk} (${#_psk})"
+		cat >>${PATH_WPA_SUPPLICANT_CONF}<<__EOF__
+  psk=${_psk}
+}
+__EOF__
+	else
+		atheros_info "wpa_makeconf : ${DEV_VAP}, MODE=${WL_MODE}, PSK(XXX)=${_psk} (${#_psk})"
+		echo " ---------------- "
+		echo "    wrong psk length ${#_psk}"
+		echo "    psk : 8 to 63 letters plain text ASCII or 64 hex digits."
+		echo " ---------------- "
+	fi
+
+	echo "---< ${PATH_WPA_SUPPLICANT_CONF} >---"
+	cat ${PATH_WPA_SUPPLICANT_CONF}
+	echo "---> ${PATH_WPA_SUPPLICANT_CONF} <---"
+}
+
+
+# -------------------------------------------------------------------
+# atheros_set_wpa
+#     make wpa_supplicant.conf and bootup wpa_supplicant
+# -------------------------------------------------------------------
+# _auth  _encript | proto=:key_mgmt=: pairwise= : group=
+# ----------------+--------------------------------------------------
+# WPA2   AUTO     |  WPA2 : WPA-PSK : CCMP TKIP : CCMP TKIP
+# WPA2   AES      |  WPA2 : WPA-PSK : CCMP      : CCMP TKIP
+# WPA    TKIP     |   WPA : WPA-PSK :      TKIP : CCMP TKIP
+# WPA    AES      |   WPA : WPA-PSK : CCMP      : CCMP TKIP
+# WPA    AUTO     |   WPA : WPA-PSK : CCMP TKIP : CCMP TKIP
+# -------------------------------------------------------------------
+atheros_set_wpa() {
+
+_auth="${1}"
+_encript="${2}"
+_ssid="${3}"
+_psk="${4}"
+
+	atheros_info "set_wpa: ${DEV_VAP}, auth=${_auth}, encript=${_encript}"
+
+	case "${_auth}" in
+	'WPA'|'WPA2')
+		case "${_encript}" in
+		'AES')
+		atheros_wpa_makeconf "${_auth}" "CCMP" "WPA-PSK" "${_ssid}" "${_psk}" "CCMP TKIP"
+		;;
+		'TKIP')
+		atheros_wpa_makeconf "${_auth}" "TKIP" "WPA-PSK" "${_ssid}" "${_psk}" "CCMP TKIP"
+		;;
+		'AUTO')
+		# if set group="CCMP TKIP WEP104 WEP40" can be connect to Airmac WEP-TSN
+		# but, not STABLE( repeatedly disconnect per 10 sec )
+		atheros_wpa_makeconf "${_auth}" "CCMP TKIP" "WPA-PSK" "${_ssid}" "${_psk}" "CCMP TKIP"
+		;;
+		*) # AUTO
+		echo "Unknown encript ${_encript}"
+		atheros_wpa_makeconf "${_auth}" "CCMP TKIP" "WPA-PSK" "${_ssid}" "${_psk}" "CCMP TKIP"
+		;;
+		esac
+
+		atheros_kill_wpa
+
+		echo wpa_supplicant \
+		  -B \
+		  -P${PATH_WPA_SUPPLICANT_PID} \
+		  -i${DEV_VAP} \
+		  -Dmadwifi \
+		  -c${PATH_WPA_SUPPLICANT_CONF} \
+		  -f${PATH_WPA_SUPPLICANT_LOG} \
+		  --
+
+		wpa_supplicant \
+		  -B \
+		  -P${PATH_WPA_SUPPLICANT_PID} \
+		  -i${DEV_VAP} \
+		  -Dmadwifi \
+		  -c${PATH_WPA_SUPPLICANT_CONF} \
+		  -f${PATH_WPA_SUPPLICANT_LOG} \
+		  --
+		
+		sleep 1
+		
+#		cat ${PATH_WPA_SUPPLICANT_LOG}
+	esac
+}
+
+# ===================================================================
+# atheros_set_wepkey
+#     set one wep key, set hex key if 10 , 26 letters.
+#                      set string key if 5, 13 letters.
+# -------------------------------------------------------------------
+# atheros_set_wepkey _index _key
+# -------------------------------------------------------------------
+atheros_set_wepkey() {
+
+_index=${1}
+_key=${2}
+
+	atheros_info "set_wepkey: ${DEV_VAP}, ID=${_index}, KEY=\"${_key}\" (${#_key})"
+
+	if [ "${_key}" != "" ]; then
+		case "${#_key}" in
+		5|13)
+			iwconfig ${DEV_VAP} key "s:${_key}" "[$_index]"
+		   	;;
+		10|26)
+		   	iwconfig ${DEV_VAP} key "${_key}" "[$_index]"
+		   	;;
+		*)
+			echo " ---------------- "
+			echo "    wrong WEP length ${#_key}"
+			echo "    WEP : 5, 10 letters plain text ASCII or 13, 26 hex digits."
+			echo " ---------------- "
+		esac
+	fi
+
+}
+
+# -------------------------------------------------------------------
+# atheros_set_wep
+#     set wep key 1,2,3,4, set key index, and mark wep is on.
+# -------------------------------------------------------------------
+atheros_set_wep() {
+
+	atheros_info "set_wep: ${DEV_VAP}, ID=${WL_WEP_KEY_ID}"
+
+	atheros_set_wepkey 1 "${WL_WEP_KEY0}"
+	atheros_set_wepkey 2 "${WL_WEP_KEY1}"
+	atheros_set_wepkey 3 "${WL_WEP_KEY2}"
+	atheros_set_wepkey 4 "${WL_WEP_KEY3}"
+
+	if [ "${WL_WEP_KEY_ID}" != "" ]; then
+		iwconfig ${DEV_VAP} key "[${WL_WEP_KEY_ID}]"
+	fi
+
+	iwconfig ${DEV_VAP} key on
+
+	iwlist ${DEV_VAP} keys
+}
+
+# ===================================================================
+# atheros_set_channel
+#     it's required by Ad Hoc mode.
+#     Infra. mode is automaticaly select channel
+# -------------------------------------------------------------------
+atheros_set_channel() {
+
+_channel="${1}"
+
+	atheros_info "set_channel: ${DEV_VAP}, CHANNEL=${_channel}"
+
+	iwconfig ${DEV_VAP} channel ${_channel}
+}
+
+
+# ===================================================================
+# atheros_set_ssid
+#     
+# -------------------------------------------------------------------
+atheros_set_ssid() {
+
+_ssid="${1}"
+
+	atheros_info "set_ssid: ${DEV_VAP}, SSID=\"${_ssid}\""
+
+	iwconfig ${DEV_VAP} essid "${_ssid}"
+}
+
+
+# ===================================================================
+# atheros_wlanconfig
+#     make vap ( e.g.: ath0 eth0 )
+#     and get country code and supported channels
+# -------------------------------------------------------------------
+atheros_wlanconfig() {
+
+_mode="${1}"
+
+	atheros_info "wlanconfig: ${DEV_VAP}, MODE=${_mode}"
+
+	case "${_mode}" in
+	'Infrastructure')
+		wlanconfig ${DEV_VAP} create wlandev wifi0 wlanmode sta
+		;;
+	'Ad Hoc')
+		wlanconfig ${DEV_VAP} create wlandev wifi0 wlanmode adhoc
+		;;
+	'AP')
+		wlanconfig ${DEV_VAP} create wlandev wifi0 wlanmode ap
+		;;
+	*)
+		echo " ---------------- "
+		echo "    Unknown wireless mode ${_mode}"
+		echo " ---------------- "
+	esac
+
+	# Get CountryCode and Channels
+	iwpriv ${DEV_VAP} get_countrycode
+	iwpriv ${DEV_VAP} get_countryie
+	wlanconfig ${DEV_VAP} list active
+}
+
+# -------------------------------------------------------------------
+# atheros_setting_makevap
+#     make vap ( e.g.: ath0 eth0 ) then after ifdown
+# -------------------------------------------------------------------
+atheros_setting_makevap() {
+
+_mode="${1}"
+
+	atheros_info "setting_makevap: ${DEV_VAP}, MODE=${_mode}"
+
+	atheros_wlanconfig "${_mode}"
+	atheros_ifdown
+
+	# iwpriv wifi0 ATHDebug ...
+	# iwpriv wifi0 HALDbg ...
+	# iwpriv <vap> dbgLVL ...
+	atheros_debug
+}
+
+# ===================================================================
+# atheros_setting_wireless
+#     wireless settings
+# -------------------------------------------------------------------
+# _mode  _auth  _wep _enc |
+# ------------------------+------------------------------------------
+# Ad Hoc Open   OFF  ---  | authmode 1 : ch : ssid : -------- : --- : ---
+# Ad Hoc Open    ON  ---  | authmode 1 : ch : ssid : mode 11g : wep : ---
+# Ad Hoc Shared OFF  ---  | authmode 2 : ch : ssid : -------- : --- : ---
+# Ad Hoc Shared  ON  ---  | authmode 2 : ch : ssid : mode 11g : wep : ---
+#                         |
+# Infra. Open   OFF  ---  | authmode 1 : -- : ssid : -------- : --- : ---
+# Infra. Open    ON  ---  | authmode 1 : -- : ssid : mode 11g : wep : ---
+# Infra. Shared OFF  ---  | authmode 2 : -- : ssid : -------- : --- : ---
+# Infra. Shared  ON  ---  | authmode 2 : -- : ssid : mode 11g : wep : ---
+#                         |
+# Infra. WPA    ---  TKIP | authmode 5 : -- : ssid : mode 11g : --- : wpa
+# Infra. WPA    ---  AES  | authmode 5 : -- : ssid : -------- : --- : wpa
+# Infra. WPA    ---  AUTO | authmode 5 : -- : ssid : mode 11g : --- : wpa
+# Infra. WPA2   ---  AES  | authmode 5 : -- : ssid : -------- : --- : wpa
+# Infra. WPA2   ---  AUTO | authmode 5 : -- : ssid : mode 11g : --- : wpa
+# -------------------------------------------------------------------
+# _mode    : ${1} (arg 1)
+# _auth    : ${2}  (arg 2)
+# _wep     : WL_WEP_ENABLE
+# _enc     : WL_WPA_ENCRIPT
+# authmode : call atheros_set_authmode()
+# ch       : call atheros_set_channel()
+# ssid     : call atheros_set_ssid()
+# mode     : call atheros_set_mode() 
+# wep      : call atheros_set_wep()
+# wpa      : call atheros_set_wpa()
+# -------------------------------------------------------------------
+atheros_setting_wireless() {
+
+_mode="${1}"
+_auth="${2}"
+_wep="${3}"
+_enc="${4}"
+
+	atheros_info "setting_wireless: ${DEV_VAP}, MODE=${_mode}, AUTH=${_auth}, WEP=${_wep}, ENC=${_enc}"
+
+	# --
+	# set authmode need at first
+	# --
+	atheros_set_authmode "${_auth}"
+
+	# --
+	# need channel only Ad Hoc mode
+	# --
+	case "${_mode}" in
+		'Ad Hoc')  atheros_set_channel "${WL_CHANNEL}" ;;
+	esac
+
+	# --
+	# set SSID
+	# --
+	atheros_set_ssid "${WL_SSID}"
+
+	# --
+	# Disable Back Scan
+	# --
+	if [ "${DEV_VAP}" = "eth0" ]; then
+		echo "atheros_setting_wireless:Disable back scan"
+		iwpriv ${DEV_VAP} bgscan 0
+	fi
+
+	# --
+	# atheros_set_mode_11g
+	#     sti's 11n driver only supported Plane or AES
+	#     if WEP=ON or TKIP or AES then set mode "11g"
+	#     because problem in connect to Airmac WEP-TSN vs WEP
+	# -- 
+	case "${_auth}" in
+	'Open'|'Shared') 
+		if [ "${_wep}" = "ON" ]; then
+			atheros_set_mode_11g
+			atheros_set_wep
+		fi
+		atheros_ifup
+		;;
+	'WPA'|'WPA2')
+		case "${_enc}" in
+		'TKIP'|'AUTO')
+			atheros_set_mode_11g ;;
+		esac
+		# --
+		# if WPA/WPA2 exec wpa_supplicant and still ifdown,
+		#   or if WEP is ON then set wepkey and ifup
+		atheros_set_wpa "${_auth}" "${_enc}" "${WL_SSID}" "${WL_WPA_PSK}"
+		;;
+	*)
+		echo " ---------------- "
+		echo "    Unknown authmode ${_auth}"
+		echo " ---------------- "
+	esac
+
+}
+
+# -------------------------------------------------------------------
+# atheros_setting
+#     wireless settings
+#     - Open/Shared/WPA/WPA2
+#     - Channel
+#     - SSID
+#     - Wirelesss Mode
+#     - WEP key ...
+# -------------------------------------------------------------------
+atheros_setting() {
+
+	atheros_info "setting: ${DEV_VAP}"
+
+	atheros_setting_wireless "${WL_MODE}" "${WL_NETWORK_AUTH}" "${WL_WEP_ENABLE}" "${WL_WPA_ENCRIPT}"
+}
+
+# ===================================================================
+# atheros_start
+# -------------------------------------------------------------------
+atheros_start() {
+	atheros_install
+
+	atheros_setting_makevap "${WL_MODE}"
+	atheros_setting
+}
+
+# -------------------------------------------------------------------
+# atheros_start_after_down
+# -------------------------------------------------------------------
+atheros_start_after_down() {
+	atheros_install
+
+	atheros_setting_makevap "${WL_MODE}"
+}
+
+# -------------------------------------------------------------------
+# atheros_stop
+# -------------------------------------------------------------------
+atheros_stop() {
+	atheros_kill_wpa
+	#   wlanconfig ${DEV_VAP} destroy
+	#   atheros_uninstall
+}
+
+# -------------------------------------------------------------------
+# atheros_restart
+# -------------------------------------------------------------------
+atheros_restart() {
+	atheros_start
+	atheros_stop
+}
+
+# ===================================================================
+# Main #
+# -------------------------------------------------------------------
+cd "${LIBPATH}"
+
+if [ "${COMMAND}" != "" -a "${DEV_VAP}" != "" ]; then
+	case "${COMMAND}" in
+	'start')            atheros_start ;;
+	'start_after_down') atheros_start_after_down ;;
+	'stop')             atheros_stop ;;
+	'restart')          atheros_restart ;;
+	'install')          atheros_install ;;
+	'uninstall')        atheros_uninstall ;;
+	'setting')          atheros_setting ;;
+	*)                  echo ${USAGE}
+	esac
+else
+	echo "${USAGE}"
+fi
+
